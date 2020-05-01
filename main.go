@@ -72,116 +72,116 @@ import (
 )
 
 type config struct {
-	SERVER_BASE_URL              string
-	COOKIEPSW                    string
-	TWITTER_KEY                  string
-	TWITTER_SECRET               string
-	FACEBOOK_KEY                 string
-	FACEBOOK_SECRET              string
-	FITBIT_KEY                   string
-	FITBIT_SECRET                string
-	GOOGLE_KEY                   string
-	GOOGLE_SECRET                string
-	GPLUS_KEY                    string
-	GPLUS_SECRET                 string
-	GITHUB_KEY                   string
-	GITHUB_SECRET                string
-	SPOTIFY_KEY                  string
-	SPOTIFY_SECRET               string
-	LINKEDIN_KEY                 string
-	LINKEDIN_SECRET              string
-	LINE_KEY                     string
-	LINE_SECRET                  string
-	LASTFM_KEY                   string
-	LASTFM_SECRET                string
-	TWITCH_KEY                   string
-	TWITCH_SECRET                string
-	DROPBOX_KEY                  string
-	DROPBOX_SECRET               string
-	DIGITALOCEAN_KEY             string
-	DIGITALOCEAN_SECRET          string
-	BITBUCKET_KEY                string
-	BITBUCKET_SECRET             string
-	INSTAGRAM_KEY                string
-	INSTAGRAM_SECRET             string
-	INTERCOM_KEY                 string
-	INTERCOM_SECRET              string
-	BOX_KEY                      string
-	BOX_SECRET                   string
-	SALESFORCE_KEY               string
-	SALESFORCE_SECRET            string
-	SEATALK_KEY                  string
-	SEATALK_SECRET               string
-	AMAZON_KEY                   string
-	AMAZON_SECRET                string
-	YAMMER_KEY                   string
-	YAMMER_SECRET                string
-	ONEDRIVE_KEY                 string
-	ONEDRIVE_SECRET              string
-	AZUREAD_KEY                  string
-	AZUREAD_SECRET               string
-	MICROSOFTONLINE_KEY          string
-	MICROSOFTONLINE_SECRET       string
-	BATTLENET_KEY                string
-	BATTLENET_SECRET             string
-	EVEONLINE_KEY                string
-	EVEONLINE_SECRET             string
-	KAKAO_KEY                    string
-	KAKAO_SECRET                 string
-	YAHOO_KEY                    string
-	YAHOO_SECRET                 string
-	TYPETALK_KEY                 string
-	TYPETALK_SECRET              string
-	SLACK_KEY                    string
-	SLACK_SECRET                 string
-	STRIPE_KEY                   string
-	STRIPE_SECRET                string
-	WEPAY_KEY                    string
-	WEPAY_SECRET                 string
-	PAYPAL_KEY                   string
-	PAYPAL_SECRET                string
-	STEAM_KEY                    string
-	HEROKU_KEY                   string
-	HEROKU_SECRET                string
-	UBER_KEY                     string
-	UBER_SECRET                  string
-	SOUNDCLOUD_KEY               string
-	SOUNDCLOUD_SECRET            string
-	GITLAB_KEY                   string
-	GITLAB_SECRET                string
-	DAILYMOTION_KEY              string
-	DAILYMOTION_SECRET           string
-	DEEZER_KEY                   string
-	DEEZER_SECRET                string
-	DISCORD_KEY                  string
-	DISCORD_SECRET               string
-	MEETUP_KEY                   string
-	MEETUP_SECRET                string
-	AUTH0_KEY                    string
-	AUTH0_SECRET                 string
-	AUTH0_DOMAIN                 string
-	XERO_KEY                     string
-	XERO_SECRET                  string
-	VK_KEY                       string
-	VK_SECRET                    string
-	NAVER_KEY                    string
-	NAVER_SECRET                 string
-	YANDEX_KEY                   string
-	YANDEX_SECRET                string
-	NEXTCLOUD_KEY                string
-	NEXTCLOUD_SECRET             string
-	NEXTCLOUD_URL                string
-	GITEA_KEY                    string
-	GITEA_SECRET                 string
-	SHOPIFY_KEY                  string
-	SHOPIFY_SECRET               string
-	APPLE_KEY                    string
-	APPLE_SECRET                 string
-	STRAVA_KEY                   string
-	STRAVA_SECRET                string
-	OPENID_CONNECT_KEY           string
-	OPENID_CONNECT_SECRET        string
-	OPENID_CONNECT_DISCOVERY_URL string
+	ServerBaseURL             string
+	CookiePsw                 string
+	TwitterKey                string
+	TwitterSecret             string
+	FacebookKey               string
+	FacebookSecret            string
+	FitbitKey                 string
+	FitbitSecret              string
+	GoogleKey                 string
+	GoogleSecret              string
+	GplusKey                  string
+	GplusSecret               string
+	GithubKey                 string
+	GithubSecret              string
+	SpotifyKey                string
+	SpotifySecret             string
+	LinkedinKey               string
+	LinkedinSecret            string
+	LineKey                   string
+	LineSecret                string
+	LastfmKey                 string
+	LastfmSecret              string
+	TwitchKey                 string
+	TwitchSecret              string
+	DropboxKey                string
+	DropboxSecret             string
+	DigitaloceanKey           string
+	DigitaloceanSecret        string
+	BitbucketKey              string
+	BitbucketSecret           string
+	InstagramKey              string
+	InstagramSecret           string
+	IntercomKey               string
+	IntercomSecret            string
+	BoxKey                    string
+	BoxSecret                 string
+	SalesforceKey             string
+	SalesforceSecret          string
+	SeatalkKey                string
+	SeatalkSecret             string
+	AmazonKey                 string
+	AmazonSecret              string
+	YammerKey                 string
+	YammerSecret              string
+	OnedriveKey               string
+	OnedriveSecret            string
+	AzureadKey                string
+	AzureadSecret             string
+	MicrosoftonlineKey        string
+	MicrosoftonlineSecret     string
+	BattlenetKey              string
+	BattlenetSecret           string
+	EveonlineKey              string
+	EveonlineSecret           string
+	KakaoKey                  string
+	KakaoSecret               string
+	YahooKey                  string
+	YahooSecret               string
+	TypetalkKey               string
+	TypetalkSecret            string
+	SlackKey                  string
+	SlackSecret               string
+	StripeKey                 string
+	StripeSecret              string
+	WepayKey                  string
+	WepaySecret               string
+	PaypalKey                 string
+	PaypalSecret              string
+	SteamKey                  string
+	HerokuKey                 string
+	HerokuSecret              string
+	UberKey                   string
+	UberSecret                string
+	SoundcloudKey             string
+	SoundcloudSecret          string
+	GitlabKey                 string
+	GitlabSecret              string
+	DailymotionKey            string
+	DailymotionSecret         string
+	DeezerKey                 string
+	DeezerSecret              string
+	DiscordKey                string
+	DiscordSecret             string
+	MeetupKey                 string
+	MeetupSecret              string
+	Auth0Key                  string
+	Auth0Secret               string
+	Auth0Domain               string
+	XeroKey                   string
+	XeroSecret                string
+	VkKey                     string
+	VkSecret                  string
+	NaverKey                  string
+	NaverSecret               string
+	YandexKey                 string
+	YandexSecret              string
+	NextcloudKey              string
+	NextcloudSecret           string
+	NextcloudURL              string
+	GiteaKey                  string
+	GiteaSecret               string
+	ShopifyKey                string
+	ShopifySecret             string
+	AppleKey                  string
+	AppleSecret               string
+	StravaKey                 string
+	StravaSecret              string
+	OpenidConnectKey          string
+	OpenidConnectSecret       string
+	OpenidConnectDiscoveryURL string
 }
 
 func main() {
@@ -193,78 +193,78 @@ func main() {
 		return
 	}
 
-	gothic.Store = sessions.NewCookieStore([]byte(config.COOKIEPSW))
+	gothic.Store = sessions.NewCookieStore([]byte(config.CookiePsw))
 
 	goth.UseProviders(
-		twitter.New(config.TWITTER_KEY, config.TWITTER_SECRET, config.SERVER_BASE_URL+"/auth/twitter/callback"),
+		twitter.New(config.TwitterKey, config.TwitterSecret, config.ServerBaseURL+"/auth/twitter/callback"),
 		// If you'd like to use authenticate instead of authorize in Twitter provider, use this instead.
-		// twitter.NewAuthenticate(config.TWITTER_KEY, config.TWITTER_SECRET, config.SERVER_BASE_URL+"/auth/twitter/callback"),
+		// twitter.NewAuthenticate(config.TWITTER_KEY, config.TWITTER_SECRET, config. serverBaseURL+"/auth/twitter/callback"),
 
-		facebook.New(config.FACEBOOK_KEY, config.FACEBOOK_SECRET, config.SERVER_BASE_URL+"/auth/facebook/callback"),
-		fitbit.New(config.FITBIT_KEY, config.FITBIT_SECRET, config.SERVER_BASE_URL+"/auth/fitbit/callback"),
-		google.New(config.GOOGLE_KEY, config.GOOGLE_SECRET, config.SERVER_BASE_URL+"/auth/google/callback"),
-		gplus.New(config.GPLUS_KEY, config.GPLUS_SECRET, config.SERVER_BASE_URL+"/auth/gplus/callback"),
-		github.New(config.GITHUB_KEY, config.GITHUB_SECRET, config.SERVER_BASE_URL+"/auth/github/callback"),
-		spotify.New(config.SPOTIFY_KEY, config.SPOTIFY_SECRET, config.SERVER_BASE_URL+"/auth/spotify/callback"),
-		linkedin.New(config.LINKEDIN_KEY, config.LINKEDIN_SECRET, config.SERVER_BASE_URL+"/auth/linkedin/callback"),
-		line.New(config.LINE_KEY, config.LINE_SECRET, config.SERVER_BASE_URL+"/auth/line/callback", "profile", "openid", "email"),
-		lastfm.New(config.LASTFM_KEY, config.LASTFM_SECRET, config.SERVER_BASE_URL+"/auth/lastfm/callback"),
-		twitch.New(config.TWITCH_KEY, config.TWITCH_SECRET, config.SERVER_BASE_URL+"/auth/twitch/callback"),
-		dropbox.New(config.DROPBOX_KEY, config.DROPBOX_SECRET, config.SERVER_BASE_URL+"/auth/dropbox/callback"),
-		digitalocean.New(config.DIGITALOCEAN_KEY, config.DIGITALOCEAN_SECRET, config.SERVER_BASE_URL+"/auth/digitalocean/callback", "read"),
-		bitbucket.New(config.BITBUCKET_KEY, config.BITBUCKET_SECRET, config.SERVER_BASE_URL+"/auth/bitbucket/callback"),
-		instagram.New(config.INSTAGRAM_KEY, config.INSTAGRAM_SECRET, config.SERVER_BASE_URL+"/auth/instagram/callback"),
-		intercom.New(config.INTERCOM_KEY, config.INTERCOM_SECRET, config.SERVER_BASE_URL+"/auth/intercom/callback"),
-		box.New(config.BOX_KEY, config.BOX_SECRET, config.SERVER_BASE_URL+"/auth/box/callback"),
-		salesforce.New(config.SALESFORCE_KEY, config.SALESFORCE_SECRET, config.SERVER_BASE_URL+"/auth/salesforce/callback"),
-		seatalk.New(config.SEATALK_KEY, config.SEATALK_SECRET, config.SERVER_BASE_URL+"/auth/seatalk/callback"),
-		amazon.New(config.AMAZON_KEY, config.AMAZON_SECRET, config.SERVER_BASE_URL+"/auth/amazon/callback"),
-		yammer.New(config.YAMMER_KEY, config.YAMMER_SECRET, config.SERVER_BASE_URL+"/auth/yammer/callback"),
-		onedrive.New(config.ONEDRIVE_KEY, config.ONEDRIVE_SECRET, config.SERVER_BASE_URL+"/auth/onedrive/callback"),
-		azuread.New(config.AZUREAD_KEY, config.AZUREAD_SECRET, config.SERVER_BASE_URL+"/auth/azuread/callback", nil),
-		microsoftonline.New(config.MICROSOFTONLINE_KEY, config.MICROSOFTONLINE_SECRET, config.SERVER_BASE_URL+"/auth/microsoftonline/callback"),
-		battlenet.New(config.BATTLENET_KEY, config.BATTLENET_SECRET, config.SERVER_BASE_URL+"/auth/battlenet/callback"),
-		eveonline.New(config.EVEONLINE_KEY, config.EVEONLINE_SECRET, config.SERVER_BASE_URL+"/auth/eveonline/callback"),
-		kakao.New(config.KAKAO_KEY, config.KAKAO_SECRET, config.SERVER_BASE_URL+"/auth/kakao/callback"),
+		facebook.New(config.FacebookKey, config.FacebookSecret, config.ServerBaseURL+"/auth/facebook/callback"),
+		fitbit.New(config.FitbitKey, config.FitbitSecret, config.ServerBaseURL+"/auth/fitbit/callback"),
+		google.New(config.GoogleKey, config.GoogleSecret, config.ServerBaseURL+"/auth/google/callback"),
+		gplus.New(config.GplusKey, config.GplusSecret, config.ServerBaseURL+"/auth/gplus/callback"),
+		github.New(config.GithubKey, config.GithubSecret, config.ServerBaseURL+"/auth/github/callback"),
+		spotify.New(config.SpotifyKey, config.SpotifySecret, config.ServerBaseURL+"/auth/spotify/callback"),
+		linkedin.New(config.LinkedinKey, config.LinkedinSecret, config.ServerBaseURL+"/auth/linkedin/callback"),
+		line.New(config.LineKey, config.LineSecret, config.ServerBaseURL+"/auth/line/callback", "profile", "openid", "email"),
+		lastfm.New(config.LastfmKey, config.LastfmSecret, config.ServerBaseURL+"/auth/lastfm/callback"),
+		twitch.New(config.TwitchKey, config.TwitchSecret, config.ServerBaseURL+"/auth/twitch/callback"),
+		dropbox.New(config.DropboxKey, config.DropboxSecret, config.ServerBaseURL+"/auth/dropbox/callback"),
+		digitalocean.New(config.DigitaloceanKey, config.DigitaloceanSecret, config.ServerBaseURL+"/auth/digitalocean/callback", "read"),
+		bitbucket.New(config.BitbucketKey, config.BitbucketSecret, config.ServerBaseURL+"/auth/bitbucket/callback"),
+		instagram.New(config.InstagramKey, config.InstagramSecret, config.ServerBaseURL+"/auth/instagram/callback"),
+		intercom.New(config.IntercomKey, config.IntercomSecret, config.ServerBaseURL+"/auth/intercom/callback"),
+		box.New(config.BoxKey, config.BoxSecret, config.ServerBaseURL+"/auth/box/callback"),
+		salesforce.New(config.SalesforceKey, config.SalesforceSecret, config.ServerBaseURL+"/auth/salesforce/callback"),
+		seatalk.New(config.SeatalkKey, config.SeatalkSecret, config.ServerBaseURL+"/auth/seatalk/callback"),
+		amazon.New(config.AmazonKey, config.AmazonSecret, config.ServerBaseURL+"/auth/amazon/callback"),
+		yammer.New(config.YammerKey, config.YammerSecret, config.ServerBaseURL+"/auth/yammer/callback"),
+		onedrive.New(config.OnedriveKey, config.OnedriveSecret, config.ServerBaseURL+"/auth/onedrive/callback"),
+		azuread.New(config.AzureadKey, config.AzureadSecret, config.ServerBaseURL+"/auth/azuread/callback", nil),
+		microsoftonline.New(config.MicrosoftonlineKey, config.MicrosoftonlineSecret, config.ServerBaseURL+"/auth/microsoftonline/callback"),
+		battlenet.New(config.BattlenetKey, config.BattlenetSecret, config.ServerBaseURL+"/auth/battlenet/callback"),
+		eveonline.New(config.EveonlineKey, config.EveonlineSecret, config.ServerBaseURL+"/auth/eveonline/callback"),
+		kakao.New(config.KakaoKey, config.KakaoSecret, config.ServerBaseURL+"/auth/kakao/callback"),
 
 		//Pointed localhost.com to http://localhost:3000/auth/yahoo/callback through proxy as yahoo
 		// does not allow to put custom ports in redirection uri
-		yahoo.New(config.YAHOO_KEY, config.YAHOO_SECRET, "http://localhost.com"),
-		typetalk.New(config.TYPETALK_KEY, config.TYPETALK_SECRET, config.SERVER_BASE_URL+"/auth/typetalk/callback", "my"),
-		slack.New(config.SLACK_KEY, config.SLACK_SECRET, config.SERVER_BASE_URL+"/auth/slack/callback"),
-		stripe.New(config.STRIPE_KEY, config.STRIPE_SECRET, config.SERVER_BASE_URL+"/auth/stripe/callback"),
-		wepay.New(config.WEPAY_KEY, config.WEPAY_SECRET, config.SERVER_BASE_URL+"/auth/wepay/callback", "view_user"),
+		yahoo.New(config.YahooKey, config.YahooSecret, "http://localhost.com"),
+		typetalk.New(config.TypetalkKey, config.TypetalkSecret, config.ServerBaseURL+"/auth/typetalk/callback", "my"),
+		slack.New(config.SlackKey, config.SlackSecret, config.ServerBaseURL+"/auth/slack/callback"),
+		stripe.New(config.StripeKey, config.StripeSecret, config.ServerBaseURL+"/auth/stripe/callback"),
+		wepay.New(config.WepayKey, config.WepaySecret, config.ServerBaseURL+"/auth/wepay/callback", "view_user"),
 
 		//By default paypal production auth urls will be used, please set PAYPAL_ENV=sandbox as environment variable for testing
 		//in sandbox environment
-		paypal.New(config.PAYPAL_KEY, config.PAYPAL_SECRET, config.SERVER_BASE_URL+"/auth/paypal/callback"),
-		steam.New(config.STEAM_KEY, config.SERVER_BASE_URL+"/auth/steam/callback"),
-		heroku.New(config.HEROKU_KEY, config.HEROKU_SECRET, config.SERVER_BASE_URL+"/auth/heroku/callback"),
-		uber.New(config.UBER_KEY, config.UBER_SECRET, config.SERVER_BASE_URL+"/auth/uber/callback"),
-		soundcloud.New(config.SOUNDCLOUD_KEY, config.SOUNDCLOUD_SECRET, config.SERVER_BASE_URL+"/auth/soundcloud/callback"),
-		gitlab.New(config.GITLAB_KEY, config.GITLAB_SECRET, config.SERVER_BASE_URL+"/auth/gitlab/callback"),
-		dailymotion.New(config.DAILYMOTION_KEY, config.DAILYMOTION_SECRET, config.SERVER_BASE_URL+"/auth/dailymotion/callback", "email"),
-		deezer.New(config.DEEZER_KEY, config.DEEZER_SECRET, config.SERVER_BASE_URL+"/auth/deezer/callback", "email"),
-		discord.New(config.DISCORD_KEY, config.DISCORD_SECRET, config.SERVER_BASE_URL+"/auth/discord/callback", discord.ScopeIdentify, discord.ScopeEmail),
-		meetup.New(config.MEETUP_KEY, config.MEETUP_SECRET, config.SERVER_BASE_URL+"/auth/meetup/callback"),
+		paypal.New(config.PaypalKey, config.PaypalSecret, config.ServerBaseURL+"/auth/paypal/callback"),
+		steam.New(config.SteamKey, config.ServerBaseURL+"/auth/steam/callback"),
+		heroku.New(config.HerokuKey, config.HerokuSecret, config.ServerBaseURL+"/auth/heroku/callback"),
+		uber.New(config.UberKey, config.UberSecret, config.ServerBaseURL+"/auth/uber/callback"),
+		soundcloud.New(config.SoundcloudKey, config.SoundcloudSecret, config.ServerBaseURL+"/auth/soundcloud/callback"),
+		gitlab.New(config.GitlabKey, config.GitlabSecret, config.ServerBaseURL+"/auth/gitlab/callback"),
+		dailymotion.New(config.DailymotionKey, config.DailymotionSecret, config.ServerBaseURL+"/auth/dailymotion/callback", "email"),
+		deezer.New(config.DeezerKey, config.DeezerSecret, config.ServerBaseURL+"/auth/deezer/callback", "email"),
+		discord.New(config.DiscordKey, config.DiscordSecret, config.ServerBaseURL+"/auth/discord/callback", discord.ScopeIdentify, discord.ScopeEmail),
+		meetup.New(config.MeetupKey, config.MeetupSecret, config.ServerBaseURL+"/auth/meetup/callback"),
 
 		//Auth0 allocates domain per customer, a domain must be provided for auth0 to work
-		auth0.New(config.AUTH0_KEY, config.AUTH0_SECRET, config.SERVER_BASE_URL+"/auth/auth0/callback", config.AUTH0_DOMAIN),
-		xero.New(config.XERO_KEY, config.XERO_SECRET, config.SERVER_BASE_URL+"/auth/xero/callback"),
-		vk.New(config.VK_KEY, config.VK_SECRET, config.SERVER_BASE_URL+"/auth/vk/callback"),
-		naver.New(config.NAVER_KEY, config.NAVER_SECRET, config.SERVER_BASE_URL+"/auth/naver/callback"),
-		yandex.New(config.YANDEX_KEY, config.YANDEX_SECRET, config.SERVER_BASE_URL+"/auth/yandex/callback"),
-		nextcloud.NewCustomisedDNS(config.NEXTCLOUD_KEY, config.NEXTCLOUD_SECRET, config.SERVER_BASE_URL+"/auth/nextcloud/callback", config.NEXTCLOUD_URL),
-		gitea.New(config.GITEA_KEY, config.GITEA_SECRET, config.SERVER_BASE_URL+"/auth/gitea/callback"),
-		shopify.New(config.SHOPIFY_KEY, config.SHOPIFY_SECRET, config.SERVER_BASE_URL+"/auth/shopify/callback", shopify.ScopeReadCustomers, shopify.ScopeReadOrders),
-		apple.New(config.APPLE_KEY, config.APPLE_SECRET, config.SERVER_BASE_URL+"/auth/apple/callback", nil, apple.ScopeName, apple.ScopeEmail),
-		strava.New(config.STRAVA_KEY, config.STRAVA_SECRET, config.SERVER_BASE_URL+"/auth/strava/callback"),
+		auth0.New(config.Auth0Key, config.Auth0Secret, config.ServerBaseURL+"/auth/auth0/callback", config.Auth0Domain),
+		xero.New(config.XeroKey, config.XeroSecret, config.ServerBaseURL+"/auth/xero/callback"),
+		vk.New(config.VkKey, config.VkSecret, config.ServerBaseURL+"/auth/vk/callback"),
+		naver.New(config.NaverKey, config.NaverSecret, config.ServerBaseURL+"/auth/naver/callback"),
+		yandex.New(config.YandexKey, config.YandexSecret, config.ServerBaseURL+"/auth/yandex/callback"),
+		nextcloud.NewCustomisedDNS(config.NextcloudKey, config.NextcloudSecret, config.ServerBaseURL+"/auth/nextcloud/callback", config.NextcloudURL),
+		gitea.New(config.GiteaKey, config.GiteaSecret, config.ServerBaseURL+"/auth/gitea/callback"),
+		shopify.New(config.ShopifyKey, config.ShopifySecret, config.ServerBaseURL+"/auth/shopify/callback", shopify.ScopeReadCustomers, shopify.ScopeReadOrders),
+		apple.New(config.AppleKey, config.AppleSecret, config.ServerBaseURL+"/auth/apple/callback", nil, apple.ScopeName, apple.ScopeEmail),
+		strava.New(config.StravaKey, config.StravaSecret, config.ServerBaseURL+"/auth/strava/callback"),
 	)
 
 	// OpenID Connect is based on OpenID Connect Auto Discovery URL (https://openid.net/specs/openid-connect-discovery-1_0-17.html)
 	// because the OpenID Connect provider initialize it self in the New(), it can return an error which should be handled or ignored
 	// ignore the error for now
-	openidConnect, _ := openidConnect.New(config.OPENID_CONNECT_KEY, config.OPENID_CONNECT_SECRET, config.SERVER_BASE_URL+"/auth/openid-connect/callback", config.OPENID_CONNECT_DISCOVERY_URL)
+	openidConnect, _ := openidConnect.New(config.OpenidConnectKey, config.OpenidConnectSecret, config.ServerBaseURL+"/auth/openid-connect/callback", config.OpenidConnectDiscoveryURL)
 	if openidConnect != nil {
 		goth.UseProviders(openidConnect)
 	}
