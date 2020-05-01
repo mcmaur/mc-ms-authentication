@@ -197,7 +197,6 @@ func main() {
 
 	goth.UseProviders(
 		twitter.New(config.TWITTER_KEY, config.TWITTER_SECRET, config.SERVER_BASE_URL+"/auth/twitter/callback"),
-
 		// If you'd like to use authenticate instead of authorize in Twitter provider, use this instead.
 		// twitter.NewAuthenticate(config.TWITTER_KEY, config.TWITTER_SECRET, config.SERVER_BASE_URL+"/auth/twitter/callback"),
 
@@ -235,9 +234,9 @@ func main() {
 		slack.New(config.SLACK_KEY, config.SLACK_SECRET, config.SERVER_BASE_URL+"/auth/slack/callback"),
 		stripe.New(config.STRIPE_KEY, config.STRIPE_SECRET, config.SERVER_BASE_URL+"/auth/stripe/callback"),
 		wepay.New(config.WEPAY_KEY, config.WEPAY_SECRET, config.SERVER_BASE_URL+"/auth/wepay/callback", "view_user"),
+
 		//By default paypal production auth urls will be used, please set PAYPAL_ENV=sandbox as environment variable for testing
 		//in sandbox environment
-
 		paypal.New(config.PAYPAL_KEY, config.PAYPAL_SECRET, config.SERVER_BASE_URL+"/auth/paypal/callback"),
 		steam.New(config.STEAM_KEY, config.SERVER_BASE_URL+"/auth/steam/callback"),
 		heroku.New(config.HEROKU_KEY, config.HEROKU_SECRET, config.SERVER_BASE_URL+"/auth/heroku/callback"),
@@ -362,7 +361,7 @@ func main() {
 	})
 
 	p.Get("/", func(res http.ResponseWriter, req *http.Request) {
-		t, _ := template.New("foo").Parse(indexTemplate)
+		t, _ := template.ParseFiles("login_page.html")
 		t.Execute(res, providerIndex)
 	})
 	log.Println("listening on localhost:3000")
@@ -374,10 +373,6 @@ type ProviderIndex struct {
 	Providers    []string
 	ProvidersMap map[string]string
 }
-
-var indexTemplate = `{{range $key,$value:=.Providers}}
-			<p><a href="/auth/{{$value}}">Log in with {{index $.ProvidersMap $value}}</a></p>
-		{{end}}`
 
 var userTemplate = `
 		<p><a href="/logout/{{.Provider}}">logout</a></p>
