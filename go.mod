@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	cloud.google.com/go v0.56.0 // indirect
+	github.com/BurntSushi/toml v0.3.1
 	github.com/golang/protobuf v1.4.0 // indirect
 	github.com/gorilla/mux v1.7.4 // indirect
 	github.com/gorilla/pat v1.0.1

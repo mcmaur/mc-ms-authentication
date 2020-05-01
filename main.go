@@ -10,7 +10,10 @@ import (
 
 	"log"
 
+	"github.com/BurntSushi/toml"
+
 	"github.com/gorilla/pat"
+	"github.com/gorilla/sessions"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
 	"github.com/markbates/goth/providers/amazon"
@@ -68,79 +71,201 @@ import (
 	"github.com/markbates/goth/providers/yandex"
 )
 
+type config struct {
+	SERVER_BASE_URL              string
+	COOKIEPSW                    string
+	TWITTER_KEY                  string
+	TWITTER_SECRET               string
+	FACEBOOK_KEY                 string
+	FACEBOOK_SECRET              string
+	FITBIT_KEY                   string
+	FITBIT_SECRET                string
+	GOOGLE_KEY                   string
+	GOOGLE_SECRET                string
+	GPLUS_KEY                    string
+	GPLUS_SECRET                 string
+	GITHUB_KEY                   string
+	GITHUB_SECRET                string
+	SPOTIFY_KEY                  string
+	SPOTIFY_SECRET               string
+	LINKEDIN_KEY                 string
+	LINKEDIN_SECRET              string
+	LINE_KEY                     string
+	LINE_SECRET                  string
+	LASTFM_KEY                   string
+	LASTFM_SECRET                string
+	TWITCH_KEY                   string
+	TWITCH_SECRET                string
+	DROPBOX_KEY                  string
+	DROPBOX_SECRET               string
+	DIGITALOCEAN_KEY             string
+	DIGITALOCEAN_SECRET          string
+	BITBUCKET_KEY                string
+	BITBUCKET_SECRET             string
+	INSTAGRAM_KEY                string
+	INSTAGRAM_SECRET             string
+	INTERCOM_KEY                 string
+	INTERCOM_SECRET              string
+	BOX_KEY                      string
+	BOX_SECRET                   string
+	SALESFORCE_KEY               string
+	SALESFORCE_SECRET            string
+	SEATALK_KEY                  string
+	SEATALK_SECRET               string
+	AMAZON_KEY                   string
+	AMAZON_SECRET                string
+	YAMMER_KEY                   string
+	YAMMER_SECRET                string
+	ONEDRIVE_KEY                 string
+	ONEDRIVE_SECRET              string
+	AZUREAD_KEY                  string
+	AZUREAD_SECRET               string
+	MICROSOFTONLINE_KEY          string
+	MICROSOFTONLINE_SECRET       string
+	BATTLENET_KEY                string
+	BATTLENET_SECRET             string
+	EVEONLINE_KEY                string
+	EVEONLINE_SECRET             string
+	KAKAO_KEY                    string
+	KAKAO_SECRET                 string
+	YAHOO_KEY                    string
+	YAHOO_SECRET                 string
+	TYPETALK_KEY                 string
+	TYPETALK_SECRET              string
+	SLACK_KEY                    string
+	SLACK_SECRET                 string
+	STRIPE_KEY                   string
+	STRIPE_SECRET                string
+	WEPAY_KEY                    string
+	WEPAY_SECRET                 string
+	PAYPAL_KEY                   string
+	PAYPAL_SECRET                string
+	STEAM_KEY                    string
+	HEROKU_KEY                   string
+	HEROKU_SECRET                string
+	UBER_KEY                     string
+	UBER_SECRET                  string
+	SOUNDCLOUD_KEY               string
+	SOUNDCLOUD_SECRET            string
+	GITLAB_KEY                   string
+	GITLAB_SECRET                string
+	DAILYMOTION_KEY              string
+	DAILYMOTION_SECRET           string
+	DEEZER_KEY                   string
+	DEEZER_SECRET                string
+	DISCORD_KEY                  string
+	DISCORD_SECRET               string
+	MEETUP_KEY                   string
+	MEETUP_SECRET                string
+	AUTH0_KEY                    string
+	AUTH0_SECRET                 string
+	AUTH0_DOMAIN                 string
+	XERO_KEY                     string
+	XERO_SECRET                  string
+	VK_KEY                       string
+	VK_SECRET                    string
+	NAVER_KEY                    string
+	NAVER_SECRET                 string
+	YANDEX_KEY                   string
+	YANDEX_SECRET                string
+	NEXTCLOUD_KEY                string
+	NEXTCLOUD_SECRET             string
+	NEXTCLOUD_URL                string
+	GITEA_KEY                    string
+	GITEA_SECRET                 string
+	SHOPIFY_KEY                  string
+	SHOPIFY_SECRET               string
+	APPLE_KEY                    string
+	APPLE_SECRET                 string
+	STRAVA_KEY                   string
+	STRAVA_SECRET                string
+	OPENID_CONNECT_KEY           string
+	OPENID_CONNECT_SECRET        string
+	OPENID_CONNECT_DISCOVERY_URL string
+}
+
 func main() {
 
-	SetInitialConfig()
+	var config config
+	if _, err := toml.DecodeFile("env.toml", &config); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+		return
+	}
+
+	gothic.Store = sessions.NewCookieStore([]byte(config.COOKIEPSW))
 
 	goth.UseProviders(
-		twitter.New(os.Getenv("TWITTER_KEY"), os.Getenv("TWITTER_SECRET"), "http://localhost:3000/auth/twitter/callback"),
-		// If you'd like to use authenticate instead of authorize in Twitter provider, use this instead.
-		// twitter.NewAuthenticate(os.Getenv("TWITTER_KEY"), os.Getenv("TWITTER_SECRET"), "http://localhost:3000/auth/twitter/callback"),
+		twitter.New(config.TWITTER_KEY, config.TWITTER_SECRET, config.SERVER_BASE_URL+"/auth/twitter/callback"),
 
-		facebook.New(os.Getenv("FACEBOOK_KEY"), os.Getenv("FACEBOOK_SECRET"), "http://localhost:3000/auth/facebook/callback"),
-		fitbit.New(os.Getenv("FITBIT_KEY"), os.Getenv("FITBIT_SECRET"), "http://localhost:3000/auth/fitbit/callback"),
-		google.New(os.Getenv("GOOGLE_KEY"), os.Getenv("GOOGLE_SECRET"), "http://localhost:3000/auth/google/callback"),
-		gplus.New(os.Getenv("GPLUS_KEY"), os.Getenv("GPLUS_SECRET"), "http://localhost:3000/auth/gplus/callback"),
-		github.New(os.Getenv("GITHUB_KEY"), os.Getenv("GITHUB_SECRET"), "http://localhost:3000/auth/github/callback"),
-		spotify.New(os.Getenv("SPOTIFY_KEY"), os.Getenv("SPOTIFY_SECRET"), "http://localhost:3000/auth/spotify/callback"),
-		linkedin.New(os.Getenv("LINKEDIN_KEY"), os.Getenv("LINKEDIN_SECRET"), "http://localhost:3000/auth/linkedin/callback"),
-		line.New(os.Getenv("LINE_KEY"), os.Getenv("LINE_SECRET"), "http://localhost:3000/auth/line/callback", "profile", "openid", "email"),
-		lastfm.New(os.Getenv("LASTFM_KEY"), os.Getenv("LASTFM_SECRET"), "http://localhost:3000/auth/lastfm/callback"),
-		twitch.New(os.Getenv("TWITCH_KEY"), os.Getenv("TWITCH_SECRET"), "http://localhost:3000/auth/twitch/callback"),
-		dropbox.New(os.Getenv("DROPBOX_KEY"), os.Getenv("DROPBOX_SECRET"), "http://localhost:3000/auth/dropbox/callback"),
-		digitalocean.New(os.Getenv("DIGITALOCEAN_KEY"), os.Getenv("DIGITALOCEAN_SECRET"), "http://localhost:3000/auth/digitalocean/callback", "read"),
-		bitbucket.New(os.Getenv("BITBUCKET_KEY"), os.Getenv("BITBUCKET_SECRET"), "http://localhost:3000/auth/bitbucket/callback"),
-		instagram.New(os.Getenv("INSTAGRAM_KEY"), os.Getenv("INSTAGRAM_SECRET"), "http://localhost:3000/auth/instagram/callback"),
-		intercom.New(os.Getenv("INTERCOM_KEY"), os.Getenv("INTERCOM_SECRET"), "http://localhost:3000/auth/intercom/callback"),
-		box.New(os.Getenv("BOX_KEY"), os.Getenv("BOX_SECRET"), "http://localhost:3000/auth/box/callback"),
-		salesforce.New(os.Getenv("SALESFORCE_KEY"), os.Getenv("SALESFORCE_SECRET"), "http://localhost:3000/auth/salesforce/callback"),
-		seatalk.New(os.Getenv("SEATALK_KEY"), os.Getenv("SEATALK_SECRET"), "http://localhost:3000/auth/seatalk/callback"),
-		amazon.New(os.Getenv("AMAZON_KEY"), os.Getenv("AMAZON_SECRET"), "http://localhost:3000/auth/amazon/callback"),
-		yammer.New(os.Getenv("YAMMER_KEY"), os.Getenv("YAMMER_SECRET"), "http://localhost:3000/auth/yammer/callback"),
-		onedrive.New(os.Getenv("ONEDRIVE_KEY"), os.Getenv("ONEDRIVE_SECRET"), "http://localhost:3000/auth/onedrive/callback"),
-		azuread.New(os.Getenv("AZUREAD_KEY"), os.Getenv("AZUREAD_SECRET"), "http://localhost:3000/auth/azuread/callback", nil),
-		microsoftonline.New(os.Getenv("MICROSOFTONLINE_KEY"), os.Getenv("MICROSOFTONLINE_SECRET"), "http://localhost:3000/auth/microsoftonline/callback"),
-		battlenet.New(os.Getenv("BATTLENET_KEY"), os.Getenv("BATTLENET_SECRET"), "http://localhost:3000/auth/battlenet/callback"),
-		eveonline.New(os.Getenv("EVEONLINE_KEY"), os.Getenv("EVEONLINE_SECRET"), "http://localhost:3000/auth/eveonline/callback"),
-		kakao.New(os.Getenv("KAKAO_KEY"), os.Getenv("KAKAO_SECRET"), "http://localhost:3000/auth/kakao/callback"),
+		// If you'd like to use authenticate instead of authorize in Twitter provider, use this instead.
+		// twitter.NewAuthenticate(config.TWITTER_KEY, config.TWITTER_SECRET, config.SERVER_BASE_URL+"/auth/twitter/callback"),
+
+		facebook.New(config.FACEBOOK_KEY, config.FACEBOOK_SECRET, config.SERVER_BASE_URL+"/auth/facebook/callback"),
+		fitbit.New(config.FITBIT_KEY, config.FITBIT_SECRET, config.SERVER_BASE_URL+"/auth/fitbit/callback"),
+		google.New(config.GOOGLE_KEY, config.GOOGLE_SECRET, config.SERVER_BASE_URL+"/auth/google/callback"),
+		gplus.New(config.GPLUS_KEY, config.GPLUS_SECRET, config.SERVER_BASE_URL+"/auth/gplus/callback"),
+		github.New(config.GITHUB_KEY, config.GITHUB_SECRET, config.SERVER_BASE_URL+"/auth/github/callback"),
+		spotify.New(config.SPOTIFY_KEY, config.SPOTIFY_SECRET, config.SERVER_BASE_URL+"/auth/spotify/callback"),
+		linkedin.New(config.LINKEDIN_KEY, config.LINKEDIN_SECRET, config.SERVER_BASE_URL+"/auth/linkedin/callback"),
+		line.New(config.LINE_KEY, config.LINE_SECRET, config.SERVER_BASE_URL+"/auth/line/callback", "profile", "openid", "email"),
+		lastfm.New(config.LASTFM_KEY, config.LASTFM_SECRET, config.SERVER_BASE_URL+"/auth/lastfm/callback"),
+		twitch.New(config.TWITCH_KEY, config.TWITCH_SECRET, config.SERVER_BASE_URL+"/auth/twitch/callback"),
+		dropbox.New(config.DROPBOX_KEY, config.DROPBOX_SECRET, config.SERVER_BASE_URL+"/auth/dropbox/callback"),
+		digitalocean.New(config.DIGITALOCEAN_KEY, config.DIGITALOCEAN_SECRET, config.SERVER_BASE_URL+"/auth/digitalocean/callback", "read"),
+		bitbucket.New(config.BITBUCKET_KEY, config.BITBUCKET_SECRET, config.SERVER_BASE_URL+"/auth/bitbucket/callback"),
+		instagram.New(config.INSTAGRAM_KEY, config.INSTAGRAM_SECRET, config.SERVER_BASE_URL+"/auth/instagram/callback"),
+		intercom.New(config.INTERCOM_KEY, config.INTERCOM_SECRET, config.SERVER_BASE_URL+"/auth/intercom/callback"),
+		box.New(config.BOX_KEY, config.BOX_SECRET, config.SERVER_BASE_URL+"/auth/box/callback"),
+		salesforce.New(config.SALESFORCE_KEY, config.SALESFORCE_SECRET, config.SERVER_BASE_URL+"/auth/salesforce/callback"),
+		seatalk.New(config.SEATALK_KEY, config.SEATALK_SECRET, config.SERVER_BASE_URL+"/auth/seatalk/callback"),
+		amazon.New(config.AMAZON_KEY, config.AMAZON_SECRET, config.SERVER_BASE_URL+"/auth/amazon/callback"),
+		yammer.New(config.YAMMER_KEY, config.YAMMER_SECRET, config.SERVER_BASE_URL+"/auth/yammer/callback"),
+		onedrive.New(config.ONEDRIVE_KEY, config.ONEDRIVE_SECRET, config.SERVER_BASE_URL+"/auth/onedrive/callback"),
+		azuread.New(config.AZUREAD_KEY, config.AZUREAD_SECRET, config.SERVER_BASE_URL+"/auth/azuread/callback", nil),
+		microsoftonline.New(config.MICROSOFTONLINE_KEY, config.MICROSOFTONLINE_SECRET, config.SERVER_BASE_URL+"/auth/microsoftonline/callback"),
+		battlenet.New(config.BATTLENET_KEY, config.BATTLENET_SECRET, config.SERVER_BASE_URL+"/auth/battlenet/callback"),
+		eveonline.New(config.EVEONLINE_KEY, config.EVEONLINE_SECRET, config.SERVER_BASE_URL+"/auth/eveonline/callback"),
+		kakao.New(config.KAKAO_KEY, config.KAKAO_SECRET, config.SERVER_BASE_URL+"/auth/kakao/callback"),
 
 		//Pointed localhost.com to http://localhost:3000/auth/yahoo/callback through proxy as yahoo
 		// does not allow to put custom ports in redirection uri
-		yahoo.New(os.Getenv("YAHOO_KEY"), os.Getenv("YAHOO_SECRET"), "http://localhost.com"),
-		typetalk.New(os.Getenv("TYPETALK_KEY"), os.Getenv("TYPETALK_SECRET"), "http://localhost:3000/auth/typetalk/callback", "my"),
-		slack.New(os.Getenv("SLACK_KEY"), os.Getenv("SLACK_SECRET"), "http://localhost:3000/auth/slack/callback"),
-		stripe.New(os.Getenv("STRIPE_KEY"), os.Getenv("STRIPE_SECRET"), "http://localhost:3000/auth/stripe/callback"),
-		wepay.New(os.Getenv("WEPAY_KEY"), os.Getenv("WEPAY_SECRET"), "http://localhost:3000/auth/wepay/callback", "view_user"),
+		yahoo.New(config.YAHOO_KEY, config.YAHOO_SECRET, "http://localhost.com"),
+		typetalk.New(config.TYPETALK_KEY, config.TYPETALK_SECRET, config.SERVER_BASE_URL+"/auth/typetalk/callback", "my"),
+		slack.New(config.SLACK_KEY, config.SLACK_SECRET, config.SERVER_BASE_URL+"/auth/slack/callback"),
+		stripe.New(config.STRIPE_KEY, config.STRIPE_SECRET, config.SERVER_BASE_URL+"/auth/stripe/callback"),
+		wepay.New(config.WEPAY_KEY, config.WEPAY_SECRET, config.SERVER_BASE_URL+"/auth/wepay/callback", "view_user"),
 		//By default paypal production auth urls will be used, please set PAYPAL_ENV=sandbox as environment variable for testing
 		//in sandbox environment
-		paypal.New(os.Getenv("PAYPAL_KEY"), os.Getenv("PAYPAL_SECRET"), "http://localhost:3000/auth/paypal/callback"),
-		steam.New(os.Getenv("STEAM_KEY"), "http://localhost:3000/auth/steam/callback"),
-		heroku.New(os.Getenv("HEROKU_KEY"), os.Getenv("HEROKU_SECRET"), "http://localhost:3000/auth/heroku/callback"),
-		uber.New(os.Getenv("UBER_KEY"), os.Getenv("UBER_SECRET"), "http://localhost:3000/auth/uber/callback"),
-		soundcloud.New(os.Getenv("SOUNDCLOUD_KEY"), os.Getenv("SOUNDCLOUD_SECRET"), "http://localhost:3000/auth/soundcloud/callback"),
-		gitlab.New(os.Getenv("GITLAB_KEY"), os.Getenv("GITLAB_SECRET"), "http://localhost:3000/auth/gitlab/callback"),
-		dailymotion.New(os.Getenv("DAILYMOTION_KEY"), os.Getenv("DAILYMOTION_SECRET"), "http://localhost:3000/auth/dailymotion/callback", "email"),
-		deezer.New(os.Getenv("DEEZER_KEY"), os.Getenv("DEEZER_SECRET"), "http://localhost:3000/auth/deezer/callback", "email"),
-		discord.New(os.Getenv("DISCORD_KEY"), os.Getenv("DISCORD_SECRET"), "http://localhost:3000/auth/discord/callback", discord.ScopeIdentify, discord.ScopeEmail),
-		meetup.New(os.Getenv("MEETUP_KEY"), os.Getenv("MEETUP_SECRET"), "http://localhost:3000/auth/meetup/callback"),
+
+		paypal.New(config.PAYPAL_KEY, config.PAYPAL_SECRET, config.SERVER_BASE_URL+"/auth/paypal/callback"),
+		steam.New(config.STEAM_KEY, config.SERVER_BASE_URL+"/auth/steam/callback"),
+		heroku.New(config.HEROKU_KEY, config.HEROKU_SECRET, config.SERVER_BASE_URL+"/auth/heroku/callback"),
+		uber.New(config.UBER_KEY, config.UBER_SECRET, config.SERVER_BASE_URL+"/auth/uber/callback"),
+		soundcloud.New(config.SOUNDCLOUD_KEY, config.SOUNDCLOUD_SECRET, config.SERVER_BASE_URL+"/auth/soundcloud/callback"),
+		gitlab.New(config.GITLAB_KEY, config.GITLAB_SECRET, config.SERVER_BASE_URL+"/auth/gitlab/callback"),
+		dailymotion.New(config.DAILYMOTION_KEY, config.DAILYMOTION_SECRET, config.SERVER_BASE_URL+"/auth/dailymotion/callback", "email"),
+		deezer.New(config.DEEZER_KEY, config.DEEZER_SECRET, config.SERVER_BASE_URL+"/auth/deezer/callback", "email"),
+		discord.New(config.DISCORD_KEY, config.DISCORD_SECRET, config.SERVER_BASE_URL+"/auth/discord/callback", discord.ScopeIdentify, discord.ScopeEmail),
+		meetup.New(config.MEETUP_KEY, config.MEETUP_SECRET, config.SERVER_BASE_URL+"/auth/meetup/callback"),
 
 		//Auth0 allocates domain per customer, a domain must be provided for auth0 to work
-		auth0.New(os.Getenv("AUTH0_KEY"), os.Getenv("AUTH0_SECRET"), "http://localhost:3000/auth/auth0/callback", os.Getenv("AUTH0_DOMAIN")),
-		xero.New(os.Getenv("XERO_KEY"), os.Getenv("XERO_SECRET"), "http://localhost:3000/auth/xero/callback"),
-		vk.New(os.Getenv("VK_KEY"), os.Getenv("VK_SECRET"), "http://localhost:3000/auth/vk/callback"),
-		naver.New(os.Getenv("NAVER_KEY"), os.Getenv("NAVER_SECRET"), "http://localhost:3000/auth/naver/callback"),
-		yandex.New(os.Getenv("YANDEX_KEY"), os.Getenv("YANDEX_SECRET"), "http://localhost:3000/auth/yandex/callback"),
-		nextcloud.NewCustomisedDNS(os.Getenv("NEXTCLOUD_KEY"), os.Getenv("NEXTCLOUD_SECRET"), "http://localhost:3000/auth/nextcloud/callback", os.Getenv("NEXTCLOUD_URL")),
-		gitea.New(os.Getenv("GITEA_KEY"), os.Getenv("GITEA_SECRET"), "http://localhost:3000/auth/gitea/callback"),
-		shopify.New(os.Getenv("SHOPIFY_KEY"), os.Getenv("SHOPIFY_SECRET"), "http://localhost:3000/auth/shopify/callback", shopify.ScopeReadCustomers, shopify.ScopeReadOrders),
-		apple.New(os.Getenv("APPLE_KEY"), os.Getenv("APPLE_SECRET"), "http://localhost:3000/auth/apple/callback", nil, apple.ScopeName, apple.ScopeEmail),
-		strava.New(os.Getenv("STRAVA_KEY"), os.Getenv("STRAVA_SECRET"), "http://localhost:3000/auth/strava/callback"),
+		auth0.New(config.AUTH0_KEY, config.AUTH0_SECRET, config.SERVER_BASE_URL+"/auth/auth0/callback", config.AUTH0_DOMAIN),
+		xero.New(config.XERO_KEY, config.XERO_SECRET, config.SERVER_BASE_URL+"/auth/xero/callback"),
+		vk.New(config.VK_KEY, config.VK_SECRET, config.SERVER_BASE_URL+"/auth/vk/callback"),
+		naver.New(config.NAVER_KEY, config.NAVER_SECRET, config.SERVER_BASE_URL+"/auth/naver/callback"),
+		yandex.New(config.YANDEX_KEY, config.YANDEX_SECRET, config.SERVER_BASE_URL+"/auth/yandex/callback"),
+		nextcloud.NewCustomisedDNS(config.NEXTCLOUD_KEY, config.NEXTCLOUD_SECRET, config.SERVER_BASE_URL+"/auth/nextcloud/callback", config.NEXTCLOUD_URL),
+		gitea.New(config.GITEA_KEY, config.GITEA_SECRET, config.SERVER_BASE_URL+"/auth/gitea/callback"),
+		shopify.New(config.SHOPIFY_KEY, config.SHOPIFY_SECRET, config.SERVER_BASE_URL+"/auth/shopify/callback", shopify.ScopeReadCustomers, shopify.ScopeReadOrders),
+		apple.New(config.APPLE_KEY, config.APPLE_SECRET, config.SERVER_BASE_URL+"/auth/apple/callback", nil, apple.ScopeName, apple.ScopeEmail),
+		strava.New(config.STRAVA_KEY, config.STRAVA_SECRET, config.SERVER_BASE_URL+"/auth/strava/callback"),
 	)
 
 	// OpenID Connect is based on OpenID Connect Auto Discovery URL (https://openid.net/specs/openid-connect-discovery-1_0-17.html)
 	// because the OpenID Connect provider initialize it self in the New(), it can return an error which should be handled or ignored
 	// ignore the error for now
-	openidConnect, _ := openidConnect.New(os.Getenv("OPENID_CONNECT_KEY"), os.Getenv("OPENID_CONNECT_SECRET"), "http://localhost:3000/auth/openid-connect/callback", os.Getenv("OPENID_CONNECT_DISCOVERY_URL"))
+	openidConnect, _ := openidConnect.New(config.OPENID_CONNECT_KEY, config.OPENID_CONNECT_SECRET, config.SERVER_BASE_URL+"/auth/openid-connect/callback", config.OPENID_CONNECT_DISCOVERY_URL)
 	if openidConnect != nil {
 		goth.UseProviders(openidConnect)
 	}

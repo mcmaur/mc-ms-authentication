@@ -48,4 +48,4 @@ _testmain.go
 
 # MRCB
 # project settings
-configurations.go
+env.toml
