@@ -70,7 +70,7 @@ import (
 
 func main() {
 
-	setInitialConfig()
+	SetInitialConfig()
 
 	goth.UseProviders(
 		twitter.New(os.Getenv("TWITTER_KEY"), os.Getenv("TWITTER_SECRET"), "http://localhost:3000/auth/twitter/callback"),
@@ -244,6 +244,7 @@ func main() {
 	log.Fatal(http.ListenAndServe(":3000", p))
 }
 
+// ProviderIndex : mind your own business
 type ProviderIndex struct {
 	Providers    []string
 	ProvidersMap map[string]string
