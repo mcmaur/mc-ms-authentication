@@ -1,0 +1,12 @@
+version: '3.7'
+
+services:
+
+  database:
+    image: postgres:11
+    environment:
+      - POSTGRES_USER=mcmaur
+      - POSTGRES_PASSWORD=A556WvRLP94wWpyOEG^7L6h&6
+      - POSTGRES_DB=ms-users
+    ports:
+      - 5432:5432

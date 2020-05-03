@@ -4,13 +4,15 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"os"
+	"time"
 
 	"sort"
 
 	"log"
 
 	"github.com/BurntSushi/toml"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 
 	"github.com/gorilla/pat"
 	"github.com/gorilla/sessions"
@@ -182,16 +184,51 @@ type config struct {
 	OpenidConnectKey          string
 	OpenidConnectSecret       string
 	OpenidConnectDiscoveryURL string
+	DB                        Database `toml:"Database"`
+}
+
+// Database : db infos
+type Database struct {
+	User     string
+	Password string
+	DbName   string
+}
+
+// User : user info to database
+type User struct {
+	gorm.Model
+	Provider          string
+	Email             string `gorm:"type:varchar(100);unique_index"`
+	Name              string
+	FirstName         string
+	LastName          string
+	NickName          string
+	Description       string
+	UserID            string
+	AvatarURL         string
+	Location          string
+	AccessToken       string
+	AccessTokenSecret string
+	RefreshToken      string
+	ExpiresAt         time.Time
+	IDToken           string
 }
 
 func main() {
 
 	var config config
 	if _, err := toml.DecodeFile("env.toml", &config); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-		return
+		panic("Failed to read enviroment settings")
 	}
+
+	db, err := gorm.Open("postgres", "host=127.0.0.1 port=5432 user="+config.DB.User+" dbname="+config.DB.DbName+" password="+config.DB.Password)
+	if err != nil {
+		panic("failed to connect database: host=127.0.0.1 port=5432 user=" + config.DB.User + " dbname=" + config.DB.DbName + " password=" + config.DB.Password)
+	}
+	defer db.Close()
+
+	// Migrate the schema
+	db.AutoMigrate(&User{})
 
 	gothic.Store = sessions.NewCookieStore([]byte(config.CookiePsw))
 
@@ -340,6 +377,30 @@ func main() {
 			fmt.Fprintln(res, err)
 			return
 		}
+
+		// we have now user infos
+		fmt.Println("user: ")
+		fmt.Printf("%+v\n", user)
+		fmt.Println("")
+
+		var currentUser User
+		currentUser.Provider = user.Provider
+		currentUser.Email = user.Email
+		currentUser.Name = user.Name
+		currentUser.FirstName = user.FirstName
+		currentUser.LastName = user.LastName
+		currentUser.NickName = user.NickName
+		currentUser.Description = user.Description
+		currentUser.UserID = user.UserID
+		currentUser.AvatarURL = user.AvatarURL
+		currentUser.Location = user.Location
+		currentUser.AccessToken = user.AccessToken
+		currentUser.AccessTokenSecret = user.AccessTokenSecret
+		currentUser.RefreshToken = user.RefreshToken
+		currentUser.ExpiresAt = user.ExpiresAt
+		currentUser.IDToken = user.IDToken
+		db.Create(&currentUser)
+
 		t, _ := template.New("foo").Parse(userTemplate)
 		t.Execute(res, user)
 	})

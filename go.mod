@@ -10,6 +10,7 @@ require (
 	github.com/gorilla/pat v1.0.1
 	github.com/gorilla/sessions v1.2.0
 	github.com/jarcoal/httpmock v1.0.5 // indirect
+	github.com/jinzhu/gorm v1.9.12
 	github.com/kr/text v0.2.0 // indirect
 	github.com/lestrrat-go/jwx v0.9.2 // indirect
 	github.com/markbates/going v1.0.3 // indirect
