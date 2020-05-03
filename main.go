@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"time"
+	"v2/models"
 
 	"sort"
 
@@ -73,162 +73,23 @@ import (
 	"github.com/markbates/goth/providers/yandex"
 )
 
-type config struct {
-	ServerBaseURL             string
-	CookiePsw                 string
-	TwitterKey                string
-	TwitterSecret             string
-	FacebookKey               string
-	FacebookSecret            string
-	FitbitKey                 string
-	FitbitSecret              string
-	GoogleKey                 string
-	GoogleSecret              string
-	GplusKey                  string
-	GplusSecret               string
-	GithubKey                 string
-	GithubSecret              string
-	SpotifyKey                string
-	SpotifySecret             string
-	LinkedinKey               string
-	LinkedinSecret            string
-	LineKey                   string
-	LineSecret                string
-	LastfmKey                 string
-	LastfmSecret              string
-	TwitchKey                 string
-	TwitchSecret              string
-	DropboxKey                string
-	DropboxSecret             string
-	DigitaloceanKey           string
-	DigitaloceanSecret        string
-	BitbucketKey              string
-	BitbucketSecret           string
-	InstagramKey              string
-	InstagramSecret           string
-	IntercomKey               string
-	IntercomSecret            string
-	BoxKey                    string
-	BoxSecret                 string
-	SalesforceKey             string
-	SalesforceSecret          string
-	SeatalkKey                string
-	SeatalkSecret             string
-	AmazonKey                 string
-	AmazonSecret              string
-	YammerKey                 string
-	YammerSecret              string
-	OnedriveKey               string
-	OnedriveSecret            string
-	AzureadKey                string
-	AzureadSecret             string
-	MicrosoftonlineKey        string
-	MicrosoftonlineSecret     string
-	BattlenetKey              string
-	BattlenetSecret           string
-	EveonlineKey              string
-	EveonlineSecret           string
-	KakaoKey                  string
-	KakaoSecret               string
-	YahooKey                  string
-	YahooSecret               string
-	TypetalkKey               string
-	TypetalkSecret            string
-	SlackKey                  string
-	SlackSecret               string
-	StripeKey                 string
-	StripeSecret              string
-	WepayKey                  string
-	WepaySecret               string
-	PaypalKey                 string
-	PaypalSecret              string
-	SteamKey                  string
-	HerokuKey                 string
-	HerokuSecret              string
-	UberKey                   string
-	UberSecret                string
-	SoundcloudKey             string
-	SoundcloudSecret          string
-	GitlabKey                 string
-	GitlabSecret              string
-	DailymotionKey            string
-	DailymotionSecret         string
-	DeezerKey                 string
-	DeezerSecret              string
-	DiscordKey                string
-	DiscordSecret             string
-	MeetupKey                 string
-	MeetupSecret              string
-	Auth0Key                  string
-	Auth0Secret               string
-	Auth0Domain               string
-	XeroKey                   string
-	XeroSecret                string
-	VkKey                     string
-	VkSecret                  string
-	NaverKey                  string
-	NaverSecret               string
-	YandexKey                 string
-	YandexSecret              string
-	NextcloudKey              string
-	NextcloudSecret           string
-	NextcloudURL              string
-	GiteaKey                  string
-	GiteaSecret               string
-	ShopifyKey                string
-	ShopifySecret             string
-	AppleKey                  string
-	AppleSecret               string
-	StravaKey                 string
-	StravaSecret              string
-	OpenidConnectKey          string
-	OpenidConnectSecret       string
-	OpenidConnectDiscoveryURL string
-	DB                        Database `toml:"Database"`
-}
-
-// Database : db infos
-type Database struct {
-	User     string
-	Password string
-	DbName   string
-}
-
-// User : user info to database
-type User struct {
-	gorm.Model
-	Provider          string
-	Email             string `gorm:"type:varchar(100);unique_index"`
-	Name              string
-	FirstName         string
-	LastName          string
-	NickName          string
-	Description       string
-	UserID            string
-	AvatarURL         string
-	Location          string
-	AccessToken       string
-	AccessTokenSecret string
-	RefreshToken      string
-	ExpiresAt         time.Time
-	IDToken           string
-}
-
 func main() {
 
-	var config config
+	var config models.Config
 	if _, err := toml.DecodeFile("env.toml", &config); err != nil {
 		panic("Failed to read enviroment settings")
 	}
 
-	db, err := gorm.Open("postgres", "host=127.0.0.1 port=5432 user="+config.DB.User+" dbname="+config.DB.DbName+" password="+config.DB.Password)
+	db, err := gorm.Open("postgres", "host=127.0.0.1 port=5432 user="+config.DB.User+" dbname="+config.DB.DbName+" password="+config.DB.Password+" sslmode=disable")
 	if err != nil {
-		panic("failed to connect database: host=127.0.0.1 port=5432 user=" + config.DB.User + " dbname=" + config.DB.DbName + " password=" + config.DB.Password)
+		fmt.Println("DEBUG: host=127.0.0.1 port=5432 user=" + config.DB.User + " dbname=" + config.DB.DbName + " password=" + config.DB.Password + " sslmode=disable")
+		fmt.Println("ERR: ", err)
+		panic("failed to connect database")
 	}
 	defer db.Close()
 
 	// Migrate the schema
-	db.AutoMigrate(&User{})
+	db.AutoMigrate(&models.User{})
 
 	gothic.Store = sessions.NewCookieStore([]byte(config.CookiePsw))
 
@@ -383,7 +244,7 @@ func main() {
 		fmt.Printf("%+v\n", user)
 		fmt.Println("")
 
-		var currentUser User
+		var currentUser models.User
 		currentUser.Provider = user.Provider
 		currentUser.Email = user.Email
 		currentUser.Name = user.Name
@@ -400,6 +261,8 @@ func main() {
 		currentUser.ExpiresAt = user.ExpiresAt
 		currentUser.IDToken = user.IDToken
 		db.Create(&currentUser)
+
+		fmt.Println("..Created User..")
 
 		t, _ := template.New("foo").Parse(userTemplate)
 		t.Execute(res, user)
