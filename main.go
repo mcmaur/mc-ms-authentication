@@ -242,6 +242,7 @@ func main() {
 		// we have now user infos
 		fmt.Println("user: ")
 		fmt.Printf("%+v\n", user)
+		//fmt.Printf("%+v\n", user.)
 		fmt.Println("")
 
 		var currentUser models.User
@@ -285,7 +286,7 @@ func main() {
 	})
 
 	p.Get("/", func(res http.ResponseWriter, req *http.Request) {
-		t, _ := template.ParseFiles("login_page.html")
+		t, _ := template.ParseFiles("fe/login_page.html")
 		t.Execute(res, providerIndex)
 	})
 	log.Println("listening on localhost:3000")
