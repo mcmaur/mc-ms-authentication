@@ -73,16 +73,27 @@ import (
 	"github.com/markbates/goth/providers/yandex"
 )
 
+// ProviderIndex : mind your own business
+type ProviderIndex struct {
+	Providers    []string
+	ProvidersMap map[string]string
+}
+
+var providerIndex *ProviderIndex
+var db *gorm.DB
+var err error
+
 func main() {
 
 	var config models.Config
-	if _, err := toml.DecodeFile("env.toml", &config); err != nil {
+	if _, err = toml.DecodeFile("env.toml", &config); err != nil {
 		panic("Failed to read enviroment settings")
 	}
 
-	db, err := gorm.Open("postgres", "host=127.0.0.1 port=5432 user="+config.DB.User+" dbname="+config.DB.DbName+" password="+config.DB.Password+" sslmode=disable")
+	databaseConnectionSettings := "host=127.0.0.1 port=5432 user=" + config.DB.User + " dbname=" + config.DB.DbName + " password=" + config.DB.Password + " sslmode=disable"
+	db, err = gorm.Open("postgres", databaseConnectionSettings)
 	if err != nil {
-		fmt.Println("DEBUG: host=127.0.0.1 port=5432 user=" + config.DB.User + " dbname=" + config.DB.DbName + " password=" + config.DB.Password + " sslmode=disable")
+		fmt.Println("DEBUG: ", databaseConnectionSettings)
 		fmt.Println("ERR: ", err)
 		panic("failed to connect database")
 	}
@@ -228,75 +239,77 @@ func main() {
 	}
 	sort.Strings(keys)
 
-	providerIndex := &ProviderIndex{Providers: keys, ProvidersMap: m}
+	providerIndex = &ProviderIndex{Providers: keys, ProvidersMap: m}
 
 	p := pat.New()
-	p.Get("/auth/{provider}/callback", func(res http.ResponseWriter, req *http.Request) {
+	p.Get("/", http.HandlerFunc(root))
+	p.Get("/auth/{provider}", http.HandlerFunc(socialredirect))
+	p.Get("/auth/{provider}/callback", http.HandlerFunc(callback))
+	p.Get("/logout/{provider}", http.HandlerFunc(logout))
 
-		user, err := gothic.CompleteUserAuth(res, req)
-		if err != nil {
-			fmt.Fprintln(res, err)
-			return
-		}
-
-		// we have now user infos
-		fmt.Println("user: ")
-		fmt.Printf("%+v\n", user)
-		//fmt.Printf("%+v\n", user.)
-		fmt.Println("")
-
-		var currentUser models.User
-		currentUser.Provider = user.Provider
-		currentUser.Email = user.Email
-		currentUser.Name = user.Name
-		currentUser.FirstName = user.FirstName
-		currentUser.LastName = user.LastName
-		currentUser.NickName = user.NickName
-		currentUser.Description = user.Description
-		currentUser.UserID = user.UserID
-		currentUser.AvatarURL = user.AvatarURL
-		currentUser.Location = user.Location
-		currentUser.AccessToken = user.AccessToken
-		currentUser.AccessTokenSecret = user.AccessTokenSecret
-		currentUser.RefreshToken = user.RefreshToken
-		currentUser.ExpiresAt = user.ExpiresAt
-		currentUser.IDToken = user.IDToken
-		db.Create(&currentUser)
-
-		fmt.Println("..Created User..")
-
-		t, _ := template.New("foo").Parse(userTemplate)
-		t.Execute(res, user)
-	})
-
-	p.Get("/logout/{provider}", func(res http.ResponseWriter, req *http.Request) {
-		gothic.Logout(res, req)
-		res.Header().Set("Location", "/")
-		res.WriteHeader(http.StatusTemporaryRedirect)
-	})
-
-	p.Get("/auth/{provider}", func(res http.ResponseWriter, req *http.Request) {
-		// try to get the user without re-authenticating
-		if gothUser, err := gothic.CompleteUserAuth(res, req); err == nil {
-			t, _ := template.New("foo").Parse(userTemplate)
-			t.Execute(res, gothUser)
-		} else {
-			gothic.BeginAuthHandler(res, req)
-		}
-	})
-
-	p.Get("/", func(res http.ResponseWriter, req *http.Request) {
-		t, _ := template.ParseFiles("fe/login_page.html")
-		t.Execute(res, providerIndex)
-	})
 	log.Println("listening on localhost:3000")
 	log.Fatal(http.ListenAndServe(":3000", p))
 }
 
-// ProviderIndex : mind your own business
-type ProviderIndex struct {
-	Providers    []string
-	ProvidersMap map[string]string
+func root(res http.ResponseWriter, req *http.Request) {
+	t, _ := template.ParseFiles("fe/login_page.html")
+	t.Execute(res, providerIndex)
+}
+
+func socialredirect(res http.ResponseWriter, req *http.Request) {
+	// try to get the user without re-authenticating
+	if gothUser, err := gothic.CompleteUserAuth(res, req); err == nil {
+		t, _ := template.New("foo").Parse(userTemplate)
+		t.Execute(res, gothUser)
+		fmt.Println("ERR: ", err)
+	} else {
+		fmt.Println("ERR: ", err)
+		gothic.BeginAuthHandler(res, req)
+	}
+}
+
+func callback(res http.ResponseWriter, req *http.Request) {
+
+	user, err := gothic.CompleteUserAuth(res, req)
+	if err != nil {
+		fmt.Fprintln(res, err)
+		return
+	}
+
+	// we have now user infos
+	fmt.Println("user: ")
+	fmt.Printf("%+v\n", user)
+	//fmt.Printf("%+v\n", user.)
+	fmt.Println("")
+
+	var currentUser models.User
+	currentUser.Provider = user.Provider
+	currentUser.Email = user.Email
+	currentUser.Name = user.Name
+	currentUser.FirstName = user.FirstName
+	currentUser.LastName = user.LastName
+	currentUser.NickName = user.NickName
+	currentUser.Description = user.Description
+	currentUser.UserID = user.UserID
+	currentUser.AvatarURL = user.AvatarURL
+	currentUser.Location = user.Location
+	currentUser.AccessToken = user.AccessToken
+	currentUser.AccessTokenSecret = user.AccessTokenSecret
+	currentUser.RefreshToken = user.RefreshToken
+	currentUser.ExpiresAt = user.ExpiresAt
+	currentUser.IDToken = user.IDToken
+	db.Create(&currentUser)
+
+	fmt.Println("..Created User..")
+
+	t, _ := template.New("foo").Parse(userTemplate)
+	t.Execute(res, user)
+}
+
+func logout(res http.ResponseWriter, req *http.Request) {
+	gothic.Logout(res, req)
+	res.Header().Set("Location", "/")
+	res.WriteHeader(http.StatusTemporaryRedirect)
 }
 
 var userTemplate = `
