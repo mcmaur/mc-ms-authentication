@@ -276,31 +276,12 @@ func callback(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// we have now user infos
-	fmt.Println("user: ")
-	fmt.Printf("%+v\n", user)
-	//fmt.Printf("%+v\n", user.)
-	fmt.Println("")
-
 	var currentUser models.User
-	currentUser.Provider = user.Provider
-	currentUser.Email = user.Email
-	currentUser.Name = user.Name
-	currentUser.FirstName = user.FirstName
-	currentUser.LastName = user.LastName
-	currentUser.NickName = user.NickName
-	currentUser.Description = user.Description
-	currentUser.UserID = user.UserID
-	currentUser.AvatarURL = user.AvatarURL
-	currentUser.Location = user.Location
-	currentUser.AccessToken = user.AccessToken
-	currentUser.AccessTokenSecret = user.AccessTokenSecret
-	currentUser.RefreshToken = user.RefreshToken
-	currentUser.ExpiresAt = user.ExpiresAt
-	currentUser.IDToken = user.IDToken
+	currentUser.FromGothUser(user)
 	db.Create(&currentUser)
 
 	fmt.Println("..Created User..")
+	fmt.Printf("%+v\n", user)
 
 	t, _ := template.New("foo").Parse(userTemplate)
 	t.Execute(res, user)
