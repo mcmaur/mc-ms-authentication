@@ -260,7 +260,7 @@ func root(res http.ResponseWriter, req *http.Request) {
 // socialredirect : redirect to social login page of the provider chosen
 func socialredirect(res http.ResponseWriter, req *http.Request) {
 	if gothUser, err := gothic.CompleteUserAuth(res, req); err == nil {
-		t, _ := template.New("foo").Parse(userTemplate)
+		t, _ := template.ParseFiles("fe/user_info.html")
 		t.Execute(res, gothUser)
 		fmt.Println("ERR: ", err)
 	} else {
@@ -284,7 +284,7 @@ func callback(res http.ResponseWriter, req *http.Request) {
 	fmt.Println("..Created User..")
 	fmt.Printf("%+v\n", user)
 
-	t, _ := template.New("foo").Parse(userTemplate)
+	t, _ := template.ParseFiles("fe/user_info.html")
 	t.Execute(res, user)
 }
 
@@ -294,17 +294,3 @@ func logout(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("Location", "/")
 	res.WriteHeader(http.StatusTemporaryRedirect)
 }
-
-var userTemplate = `
-		<p><a href="/logout/{{.Provider}}">logout</a></p>
-		<p>Name: {{.Name}} [{{.LastName}}, {{.FirstName}}]</p>
-		<p>Email: {{.Email}}</p>
-		<p>NickName: {{.NickName}}</p>
-		<p>Location: {{.Location}}</p>
-		<p>AvatarURL: {{.AvatarURL}} <img src="{{.AvatarURL}}"></p>
-		<p>Description: {{.Description}}</p>
-		<p>UserID: {{.UserID}}</p>
-		<p>AccessToken: {{.AccessToken}}</p>
-		<p>ExpiresAt: {{.ExpiresAt}}</p>
-		<p>RefreshToken: {{.RefreshToken}}</p>
-		`
