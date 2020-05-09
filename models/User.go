@@ -44,4 +44,5 @@ func (currentUser *User) FromGothUser(user goth.User) error {
 	currentUser.RefreshToken = user.RefreshToken
 	currentUser.ExpiresAt = user.ExpiresAt
 	currentUser.IDToken = user.IDToken
+	return nil
 }

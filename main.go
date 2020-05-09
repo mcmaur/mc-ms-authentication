@@ -251,13 +251,14 @@ func main() {
 	log.Fatal(http.ListenAndServe(":3000", p))
 }
 
+// root : showing login page
 func root(res http.ResponseWriter, req *http.Request) {
 	t, _ := template.ParseFiles("fe/login_page.html")
 	t.Execute(res, providerIndex)
 }
 
+// socialredirect : redirect to social login page of the provider chosen
 func socialredirect(res http.ResponseWriter, req *http.Request) {
-	// try to get the user without re-authenticating
 	if gothUser, err := gothic.CompleteUserAuth(res, req); err == nil {
 		t, _ := template.New("foo").Parse(userTemplate)
 		t.Execute(res, gothUser)
@@ -268,8 +269,8 @@ func socialredirect(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
+// callback : function executed after return from social network
 func callback(res http.ResponseWriter, req *http.Request) {
-
 	user, err := gothic.CompleteUserAuth(res, req)
 	if err != nil {
 		fmt.Fprintln(res, err)
@@ -287,6 +288,7 @@ func callback(res http.ResponseWriter, req *http.Request) {
 	t.Execute(res, user)
 }
 
+// logout : logut function
 func logout(res http.ResponseWriter, req *http.Request) {
 	gothic.Logout(res, req)
 	res.Header().Set("Location", "/")
