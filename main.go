@@ -14,7 +14,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 
-	"github.com/gorilla/pat"
+	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
@@ -241,14 +241,14 @@ func main() {
 
 	providerIndex = &ProviderIndex{Providers: keys, ProvidersMap: m}
 
-	p := pat.New()
-	p.Get("/", http.HandlerFunc(root))
-	p.Get("/auth/{provider}", http.HandlerFunc(socialredirect))
-	p.Get("/auth/{provider}/callback", http.HandlerFunc(callback))
-	p.Get("/logout/{provider}", http.HandlerFunc(logout))
+	r := mux.NewRouter()
+	r.HandleFunc("/", root)
+	r.HandleFunc("/auth/{provider}", socialredirect)
+	r.HandleFunc("/auth/{provider}/callback", callback)
+	r.HandleFunc("/logout/{provider}", logout)
 
 	log.Println("listening on localhost:3000")
-	log.Fatal(http.ListenAndServe(":3000", p))
+	log.Fatal(http.ListenAndServe(":3000", r))
 }
 
 // root : showing login page

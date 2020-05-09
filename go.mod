@@ -5,10 +5,8 @@ go 1.14
 require (
 	cloud.google.com/go v0.56.0 // indirect
 	github.com/BurntSushi/toml v0.3.1
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/golang/protobuf v1.4.0 // indirect
-	github.com/gorilla/mux v1.7.4 // indirect
-	github.com/gorilla/pat v1.0.1
+	github.com/gorilla/mux v1.7.4
 	github.com/gorilla/sessions v1.2.0
 	github.com/jarcoal/httpmock v1.0.5 // indirect
 	github.com/jinzhu/gorm v1.9.12
