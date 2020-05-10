@@ -3,19 +3,17 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
+	"sort"
 	"v2/models"
 
-	"sort"
-
-	"log"
-
 	"github.com/BurntSushi/toml"
+	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 
-	"github.com/gorilla/mux"
-	"github.com/gorilla/sessions"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
 	"github.com/markbates/goth/providers/amazon"
@@ -82,6 +80,7 @@ type ProviderIndex struct {
 var providerIndex *ProviderIndex
 var db *gorm.DB
 var err error
+var store *sessions.CookieStore
 
 func main() {
 
@@ -103,6 +102,7 @@ func main() {
 	db.AutoMigrate(&models.User{})
 
 	gothic.Store = sessions.NewCookieStore([]byte(config.CookiePsw))
+	store = sessions.NewCookieStore([]byte(config.CookiePsw))
 
 	goth.UseProviders(
 		twitter.New(config.TwitterKey, config.TwitterSecret, config.ServerBaseURL+"/auth/twitter/callback"),
@@ -283,6 +283,20 @@ func callback(res http.ResponseWriter, req *http.Request) {
 
 	fmt.Println("..Created User..")
 	fmt.Printf("%+v\n", user)
+
+	jwt, err := models.CreateToken(currentUser.ID)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	session, _ := store.Get(req, "session-name")
+	session.Values["token"] = jwt.Token
+	err = session.Save(req, res)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	t, _ := template.ParseFiles("fe/user_info.html")
 	t.Execute(res, user)
