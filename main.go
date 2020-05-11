@@ -247,8 +247,22 @@ func main() {
 	r.HandleFunc("/auth/{provider}/callback", callback)
 	r.HandleFunc("/logout/{provider}", logout)
 
+	//r.Use(Middleware)
+
 	log.Println("listening on localhost:3000")
 	log.Fatal(http.ListenAndServe(":3000", r))
+}
+
+// Middleware : checking for login tokens
+func Middleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if err := models.TokenValid(r); err == nil {
+			log.Printf("Authenticated user\n")
+			next.ServeHTTP(w, r)
+		} else {
+			http.Error(w, "Forbidden", http.StatusForbidden)
+		}
+	})
 }
 
 // root : showing login page
@@ -282,17 +296,8 @@ func callback(res http.ResponseWriter, req *http.Request) {
 	db.Create(&currentUser)
 
 	fmt.Println("..Created User..")
-	fmt.Printf("%+v\n", user)
 
-	jwt, err := models.CreateToken(currentUser.ID)
-	if err != nil {
-		http.Error(res, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	session, _ := store.Get(req, "session-name")
-	session.Values["token"] = jwt.Token
-	err = session.Save(req, res)
+	err = models.CreateToken(res, req, currentUser.ID)
 	if err != nil {
 		http.Error(res, err.Error(), http.StatusInternalServerError)
 		return

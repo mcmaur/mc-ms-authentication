@@ -13,27 +13,27 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
-// JWT : JWT struct
-type JWT struct {
-	Token string
-}
-
 // CreateToken : creates a new jwt token
-func CreateToken(userID uint) (JWT, error) {
+func CreateToken(res http.ResponseWriter, req *http.Request, userID uint) error {
 	claims := jwt.MapClaims{}
 	claims["authorized"] = true
 	claims["user_id"] = userID
 	claims["exp"] = time.Now().Add(time.Hour * 1).Unix() //Token expires after 1 hour
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	var jwt JWT
-	var err error
-	jwt.Token, err = token.SignedString([]byte(os.Getenv("API_SECRET")))
+	jwtToken, err := token.SignedString([]byte(os.Getenv("API_SECRET")))
 	if err != nil {
-		return jwt, err
+		return err
 	}
-	return jwt, nil
+	http.SetCookie(res, &http.Cookie{
+		Name:    "auth_token",
+		Value:   jwtToken,
+		Expires: time.Now().Add(120 * time.Second),
+		Domain:  "",
+	})
+	return nil
 }
 
+// TokenValid : check token validity
 func TokenValid(r *http.Request) error {
 	tokenString := ExtractToken(r)
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
