@@ -29,6 +29,7 @@ func CreateToken(res http.ResponseWriter, req *http.Request, userID uint) error 
 		Value:   jwtToken,
 		Expires: time.Now().Add(120 * time.Second),
 		Domain:  "",
+		Path:    "/",
 	})
 	return nil
 }
