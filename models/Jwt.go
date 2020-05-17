@@ -52,9 +52,10 @@ func TokenValid(r *http.Request) error {
 	return nil
 }
 
+// ExtractToken : extract token info from request
 func ExtractToken(r *http.Request) string {
 	keys := r.URL.Query()
-	token := keys.Get("token")
+	token := keys.Get("auth_token")
 	if token != "" {
 		return token
 	}
@@ -65,6 +66,7 @@ func ExtractToken(r *http.Request) string {
 	return ""
 }
 
+// ExtractTokenID : extract user id info from jwt token
 func ExtractTokenID(r *http.Request) (uint32, error) {
 	tokenString := ExtractToken(r)
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
