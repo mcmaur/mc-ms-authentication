@@ -5,7 +5,9 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"sort"
+	"strings"
 	"v2/models"
 
 	"github.com/BurntSushi/toml"
@@ -77,12 +79,15 @@ type ProviderIndex struct {
 	ProvidersMap map[string]string
 }
 
+// DB : db connection
+var DB *gorm.DB
 var providerIndex *ProviderIndex
-var db *gorm.DB
 var err error
 var store *sessions.CookieStore
 
 func main() {
+
+	os.Setenv("API_SECRET", "SDJKAFHHAJSGFAJSHFAFSAFHHSAJSKFASJJF") // TODO REMOVE IT
 
 	var config models.Config
 	if _, err = toml.DecodeFile("env.toml", &config); err != nil {
@@ -90,16 +95,16 @@ func main() {
 	}
 
 	databaseConnectionSettings := "host=127.0.0.1 port=5432 user=" + config.DB.User + " dbname=" + config.DB.DbName + " password=" + config.DB.Password + " sslmode=disable"
-	db, err = gorm.Open("postgres", databaseConnectionSettings)
+	DB, err = gorm.Open("postgres", databaseConnectionSettings)
 	if err != nil {
 		fmt.Println("DEBUG: ", databaseConnectionSettings)
 		fmt.Println("ERR: ", err)
 		panic("failed to connect database")
 	}
-	defer db.Close()
+	defer DB.Close()
 
 	// Migrate the schema
-	db.AutoMigrate(&models.User{})
+	DB.AutoMigrate(&models.User{})
 
 	gothic.Store = sessions.NewCookieStore([]byte(config.CookiePsw))
 	store = sessions.NewCookieStore([]byte(config.CookiePsw))
@@ -247,7 +252,9 @@ func main() {
 	r.HandleFunc("/auth/{provider}/callback", callback)
 	r.HandleFunc("/logout/{provider}", logout)
 
-	//r.Use(Middleware)
+	r.HandleFunc("/user_profile", userProfile)
+
+	r.Use(Middleware)
 
 	log.Println("listening on localhost:3000")
 	log.Fatal(http.ListenAndServe(":3000", r))
@@ -257,10 +264,20 @@ func main() {
 func Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if err := models.TokenValid(r); err == nil {
-			log.Printf("Authenticated user\n")
-			next.ServeHTTP(w, r)
+			// Authenticated user
+			if strings.HasPrefix(r.URL.Path, "/logout") || strings.HasPrefix(r.URL.Path, "/user_profile") {
+				next.ServeHTTP(w, r)
+			} else {
+				w.Header().Set("Location", "/user_profile")
+				w.WriteHeader(http.StatusTemporaryRedirect)
+			}
 		} else {
-			http.Error(w, "Forbidden", http.StatusForbidden)
+			// Unknown user
+			if strings.HasPrefix(r.URL.Path, "/logout") || strings.HasPrefix(r.URL.Path, "/user_profile") {
+				http.Error(w, "Forbidden", http.StatusForbidden)
+			} else {
+				next.ServeHTTP(w, r)
+			}
 		}
 	})
 }
@@ -293,9 +310,7 @@ func callback(res http.ResponseWriter, req *http.Request) {
 
 	var currentUser models.User
 	currentUser.FromGothUser(user)
-	db.Create(&currentUser)
-
-	fmt.Println("..Created User..")
+	DB.FirstOrCreate(&currentUser)
 
 	err = models.CreateToken(res, req, currentUser.ID)
 	if err != nil {
@@ -312,4 +327,27 @@ func logout(res http.ResponseWriter, req *http.Request) {
 	gothic.Logout(res, req)
 	res.Header().Set("Location", "/")
 	res.WriteHeader(http.StatusTemporaryRedirect)
+}
+
+// userProfile : showing page with user infos
+func userProfile(res http.ResponseWriter, req *http.Request) {
+
+	userid, err := models.ExtractTokenID(req)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	user := models.User{}
+	foundUser, err := user.FindUserByID(DB, userid)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Print(foundUser)
+
+	t, _ := template.ParseFiles("fe/user_info.html")
+	t.Execute(res, nil)
+	// TODO sdad
 }

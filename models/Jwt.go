@@ -2,12 +2,12 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -27,7 +27,7 @@ func CreateToken(res http.ResponseWriter, req *http.Request, userID uint) error 
 	http.SetCookie(res, &http.Cookie{
 		Name:    "auth_token",
 		Value:   jwtToken,
-		Expires: time.Now().Add(120 * time.Second),
+		Expires: time.Now().Add(120 * time.Minute),
 		Domain:  "",
 		Path:    "/",
 	})
@@ -37,6 +37,9 @@ func CreateToken(res http.ResponseWriter, req *http.Request, userID uint) error 
 // TokenValid : check token validity
 func TokenValid(r *http.Request) error {
 	tokenString := ExtractToken(r)
+	if tokenString == "" {
+		return errors.New("Cookie not found")
+	}
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
@@ -54,16 +57,11 @@ func TokenValid(r *http.Request) error {
 
 // ExtractToken : extract token info from request
 func ExtractToken(r *http.Request) string {
-	keys := r.URL.Query()
-	token := keys.Get("auth_token")
-	if token != "" {
-		return token
+	cookie, err := r.Cookie("auth_token")
+	if err != nil {
+		return ""
 	}
-	bearerToken := r.Header.Get("Authorization")
-	if len(strings.Split(bearerToken, " ")) == 2 {
-		return strings.Split(bearerToken, " ")[1]
-	}
-	return ""
+	return cookie.Value
 }
 
 // ExtractTokenID : extract user id info from jwt token
