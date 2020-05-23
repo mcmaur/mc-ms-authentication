@@ -105,79 +105,79 @@ func main() {
 	// Migrate the schema
 	DB.AutoMigrate(&models.User{})
 
-	gothic.Store = sessions.NewCookieStore([]byte(config.CookiePsw))
-	store = sessions.NewCookieStore([]byte(config.CookiePsw))
+	gothic.Store = sessions.NewCookieStore([]byte(config.CookieStore))
+	store = sessions.NewCookieStore([]byte(config.CookieStore))
 
 	goth.UseProviders(
-		twitter.New(config.TwitterKey, config.TwitterSecret, config.ServerBaseURL+"/auth/twitter/callback"),
+		twitter.New(config.TwitterKey, config.TwitterSecret, config.SocialCallbackBaseURL+"/auth/twitter/callback"),
 		// If you'd like to use authenticate instead of authorize in Twitter provider, use this instead.
-		// twitter.NewAuthenticate(config.TWITTER_KEY, config.TWITTER_SECRET, config. serverBaseURL+"/auth/twitter/callback"),
+		// twitter.NewAuthenticate(config.TWITTER_KEY, config.TWITTER_SECRET, config.SocialCallbackBaseURL+"/auth/twitter/callback"),
 
-		facebook.New(config.FacebookKey, config.FacebookSecret, config.ServerBaseURL+"/auth/facebook/callback"),
-		fitbit.New(config.FitbitKey, config.FitbitSecret, config.ServerBaseURL+"/auth/fitbit/callback"),
-		google.New(config.GoogleKey, config.GoogleSecret, config.ServerBaseURL+"/auth/google/callback"),
-		gplus.New(config.GplusKey, config.GplusSecret, config.ServerBaseURL+"/auth/gplus/callback"),
-		github.New(config.GithubKey, config.GithubSecret, config.ServerBaseURL+"/auth/github/callback"),
-		spotify.New(config.SpotifyKey, config.SpotifySecret, config.ServerBaseURL+"/auth/spotify/callback"),
-		linkedin.New(config.LinkedinKey, config.LinkedinSecret, config.ServerBaseURL+"/auth/linkedin/callback"),
-		line.New(config.LineKey, config.LineSecret, config.ServerBaseURL+"/auth/line/callback", "profile", "openid", "email"),
-		lastfm.New(config.LastfmKey, config.LastfmSecret, config.ServerBaseURL+"/auth/lastfm/callback"),
-		twitch.New(config.TwitchKey, config.TwitchSecret, config.ServerBaseURL+"/auth/twitch/callback"),
-		dropbox.New(config.DropboxKey, config.DropboxSecret, config.ServerBaseURL+"/auth/dropbox/callback"),
-		digitalocean.New(config.DigitaloceanKey, config.DigitaloceanSecret, config.ServerBaseURL+"/auth/digitalocean/callback", "read"),
-		bitbucket.New(config.BitbucketKey, config.BitbucketSecret, config.ServerBaseURL+"/auth/bitbucket/callback"),
-		instagram.New(config.InstagramKey, config.InstagramSecret, config.ServerBaseURL+"/auth/instagram/callback"),
-		intercom.New(config.IntercomKey, config.IntercomSecret, config.ServerBaseURL+"/auth/intercom/callback"),
-		box.New(config.BoxKey, config.BoxSecret, config.ServerBaseURL+"/auth/box/callback"),
-		salesforce.New(config.SalesforceKey, config.SalesforceSecret, config.ServerBaseURL+"/auth/salesforce/callback"),
-		seatalk.New(config.SeatalkKey, config.SeatalkSecret, config.ServerBaseURL+"/auth/seatalk/callback"),
-		amazon.New(config.AmazonKey, config.AmazonSecret, config.ServerBaseURL+"/auth/amazon/callback"),
-		yammer.New(config.YammerKey, config.YammerSecret, config.ServerBaseURL+"/auth/yammer/callback"),
-		onedrive.New(config.OnedriveKey, config.OnedriveSecret, config.ServerBaseURL+"/auth/onedrive/callback"),
-		azuread.New(config.AzureadKey, config.AzureadSecret, config.ServerBaseURL+"/auth/azuread/callback", nil),
-		microsoftonline.New(config.MicrosoftonlineKey, config.MicrosoftonlineSecret, config.ServerBaseURL+"/auth/microsoftonline/callback"),
-		battlenet.New(config.BattlenetKey, config.BattlenetSecret, config.ServerBaseURL+"/auth/battlenet/callback"),
-		eveonline.New(config.EveonlineKey, config.EveonlineSecret, config.ServerBaseURL+"/auth/eveonline/callback"),
-		kakao.New(config.KakaoKey, config.KakaoSecret, config.ServerBaseURL+"/auth/kakao/callback"),
+		facebook.New(config.FacebookKey, config.FacebookSecret, config.SocialCallbackBaseURL+"/auth/facebook/callback"),
+		fitbit.New(config.FitbitKey, config.FitbitSecret, config.SocialCallbackBaseURL+"/auth/fitbit/callback"),
+		google.New(config.GoogleKey, config.GoogleSecret, config.SocialCallbackBaseURL+"/auth/google/callback"),
+		gplus.New(config.GplusKey, config.GplusSecret, config.SocialCallbackBaseURL+"/auth/gplus/callback"),
+		github.New(config.GithubKey, config.GithubSecret, config.SocialCallbackBaseURL+"/auth/github/callback"),
+		spotify.New(config.SpotifyKey, config.SpotifySecret, config.SocialCallbackBaseURL+"/auth/spotify/callback"),
+		linkedin.New(config.LinkedinKey, config.LinkedinSecret, config.SocialCallbackBaseURL+"/auth/linkedin/callback"),
+		line.New(config.LineKey, config.LineSecret, config.SocialCallbackBaseURL+"/auth/line/callback", "profile", "openid", "email"),
+		lastfm.New(config.LastfmKey, config.LastfmSecret, config.SocialCallbackBaseURL+"/auth/lastfm/callback"),
+		twitch.New(config.TwitchKey, config.TwitchSecret, config.SocialCallbackBaseURL+"/auth/twitch/callback"),
+		dropbox.New(config.DropboxKey, config.DropboxSecret, config.SocialCallbackBaseURL+"/auth/dropbox/callback"),
+		digitalocean.New(config.DigitaloceanKey, config.DigitaloceanSecret, config.SocialCallbackBaseURL+"/auth/digitalocean/callback", "read"),
+		bitbucket.New(config.BitbucketKey, config.BitbucketSecret, config.SocialCallbackBaseURL+"/auth/bitbucket/callback"),
+		instagram.New(config.InstagramKey, config.InstagramSecret, config.SocialCallbackBaseURL+"/auth/instagram/callback"),
+		intercom.New(config.IntercomKey, config.IntercomSecret, config.SocialCallbackBaseURL+"/auth/intercom/callback"),
+		box.New(config.BoxKey, config.BoxSecret, config.SocialCallbackBaseURL+"/auth/box/callback"),
+		salesforce.New(config.SalesforceKey, config.SalesforceSecret, config.SocialCallbackBaseURL+"/auth/salesforce/callback"),
+		seatalk.New(config.SeatalkKey, config.SeatalkSecret, config.SocialCallbackBaseURL+"/auth/seatalk/callback"),
+		amazon.New(config.AmazonKey, config.AmazonSecret, config.SocialCallbackBaseURL+"/auth/amazon/callback"),
+		yammer.New(config.YammerKey, config.YammerSecret, config.SocialCallbackBaseURL+"/auth/yammer/callback"),
+		onedrive.New(config.OnedriveKey, config.OnedriveSecret, config.SocialCallbackBaseURL+"/auth/onedrive/callback"),
+		azuread.New(config.AzureadKey, config.AzureadSecret, config.SocialCallbackBaseURL+"/auth/azuread/callback", nil),
+		microsoftonline.New(config.MicrosoftonlineKey, config.MicrosoftonlineSecret, config.SocialCallbackBaseURL+"/auth/microsoftonline/callback"),
+		battlenet.New(config.BattlenetKey, config.BattlenetSecret, config.SocialCallbackBaseURL+"/auth/battlenet/callback"),
+		eveonline.New(config.EveonlineKey, config.EveonlineSecret, config.SocialCallbackBaseURL+"/auth/eveonline/callback"),
+		kakao.New(config.KakaoKey, config.KakaoSecret, config.SocialCallbackBaseURL+"/auth/kakao/callback"),
 
 		//Pointed localhost.com to http://localhost:3000/auth/yahoo/callback through proxy as yahoo
 		// does not allow to put custom ports in redirection uri
 		yahoo.New(config.YahooKey, config.YahooSecret, "http://localhost.com"),
-		typetalk.New(config.TypetalkKey, config.TypetalkSecret, config.ServerBaseURL+"/auth/typetalk/callback", "my"),
-		slack.New(config.SlackKey, config.SlackSecret, config.ServerBaseURL+"/auth/slack/callback"),
-		stripe.New(config.StripeKey, config.StripeSecret, config.ServerBaseURL+"/auth/stripe/callback"),
-		wepay.New(config.WepayKey, config.WepaySecret, config.ServerBaseURL+"/auth/wepay/callback", "view_user"),
+		typetalk.New(config.TypetalkKey, config.TypetalkSecret, config.SocialCallbackBaseURL+"/auth/typetalk/callback", "my"),
+		slack.New(config.SlackKey, config.SlackSecret, config.SocialCallbackBaseURL+"/auth/slack/callback"),
+		stripe.New(config.StripeKey, config.StripeSecret, config.SocialCallbackBaseURL+"/auth/stripe/callback"),
+		wepay.New(config.WepayKey, config.WepaySecret, config.SocialCallbackBaseURL+"/auth/wepay/callback", "view_user"),
 
 		//By default paypal production auth urls will be used, please set PAYPAL_ENV=sandbox as environment variable for testing
 		//in sandbox environment
-		paypal.New(config.PaypalKey, config.PaypalSecret, config.ServerBaseURL+"/auth/paypal/callback"),
-		steam.New(config.SteamKey, config.ServerBaseURL+"/auth/steam/callback"),
-		heroku.New(config.HerokuKey, config.HerokuSecret, config.ServerBaseURL+"/auth/heroku/callback"),
-		uber.New(config.UberKey, config.UberSecret, config.ServerBaseURL+"/auth/uber/callback"),
-		soundcloud.New(config.SoundcloudKey, config.SoundcloudSecret, config.ServerBaseURL+"/auth/soundcloud/callback"),
-		gitlab.New(config.GitlabKey, config.GitlabSecret, config.ServerBaseURL+"/auth/gitlab/callback"),
-		dailymotion.New(config.DailymotionKey, config.DailymotionSecret, config.ServerBaseURL+"/auth/dailymotion/callback", "email"),
-		deezer.New(config.DeezerKey, config.DeezerSecret, config.ServerBaseURL+"/auth/deezer/callback", "email"),
-		discord.New(config.DiscordKey, config.DiscordSecret, config.ServerBaseURL+"/auth/discord/callback", discord.ScopeIdentify, discord.ScopeEmail),
-		meetup.New(config.MeetupKey, config.MeetupSecret, config.ServerBaseURL+"/auth/meetup/callback"),
+		paypal.New(config.PaypalKey, config.PaypalSecret, config.SocialCallbackBaseURL+"/auth/paypal/callback"),
+		steam.New(config.SteamKey, config.SocialCallbackBaseURL+"/auth/steam/callback"),
+		heroku.New(config.HerokuKey, config.HerokuSecret, config.SocialCallbackBaseURL+"/auth/heroku/callback"),
+		uber.New(config.UberKey, config.UberSecret, config.SocialCallbackBaseURL+"/auth/uber/callback"),
+		soundcloud.New(config.SoundcloudKey, config.SoundcloudSecret, config.SocialCallbackBaseURL+"/auth/soundcloud/callback"),
+		gitlab.New(config.GitlabKey, config.GitlabSecret, config.SocialCallbackBaseURL+"/auth/gitlab/callback"),
+		dailymotion.New(config.DailymotionKey, config.DailymotionSecret, config.SocialCallbackBaseURL+"/auth/dailymotion/callback", "email"),
+		deezer.New(config.DeezerKey, config.DeezerSecret, config.SocialCallbackBaseURL+"/auth/deezer/callback", "email"),
+		discord.New(config.DiscordKey, config.DiscordSecret, config.SocialCallbackBaseURL+"/auth/discord/callback", discord.ScopeIdentify, discord.ScopeEmail),
+		meetup.New(config.MeetupKey, config.MeetupSecret, config.SocialCallbackBaseURL+"/auth/meetup/callback"),
 
 		//Auth0 allocates domain per customer, a domain must be provided for auth0 to work
-		auth0.New(config.Auth0Key, config.Auth0Secret, config.ServerBaseURL+"/auth/auth0/callback", config.Auth0Domain),
-		xero.New(config.XeroKey, config.XeroSecret, config.ServerBaseURL+"/auth/xero/callback"),
-		vk.New(config.VkKey, config.VkSecret, config.ServerBaseURL+"/auth/vk/callback"),
-		naver.New(config.NaverKey, config.NaverSecret, config.ServerBaseURL+"/auth/naver/callback"),
-		yandex.New(config.YandexKey, config.YandexSecret, config.ServerBaseURL+"/auth/yandex/callback"),
-		nextcloud.NewCustomisedDNS(config.NextcloudKey, config.NextcloudSecret, config.ServerBaseURL+"/auth/nextcloud/callback", config.NextcloudURL),
-		gitea.New(config.GiteaKey, config.GiteaSecret, config.ServerBaseURL+"/auth/gitea/callback"),
-		shopify.New(config.ShopifyKey, config.ShopifySecret, config.ServerBaseURL+"/auth/shopify/callback", shopify.ScopeReadCustomers, shopify.ScopeReadOrders),
-		apple.New(config.AppleKey, config.AppleSecret, config.ServerBaseURL+"/auth/apple/callback", nil, apple.ScopeName, apple.ScopeEmail),
-		strava.New(config.StravaKey, config.StravaSecret, config.ServerBaseURL+"/auth/strava/callback"),
+		auth0.New(config.Auth0Key, config.Auth0Secret, config.SocialCallbackBaseURL+"/auth/auth0/callback", config.Auth0Domain),
+		xero.New(config.XeroKey, config.XeroSecret, config.SocialCallbackBaseURL+"/auth/xero/callback"),
+		vk.New(config.VkKey, config.VkSecret, config.SocialCallbackBaseURL+"/auth/vk/callback"),
+		naver.New(config.NaverKey, config.NaverSecret, config.SocialCallbackBaseURL+"/auth/naver/callback"),
+		yandex.New(config.YandexKey, config.YandexSecret, config.SocialCallbackBaseURL+"/auth/yandex/callback"),
+		nextcloud.NewCustomisedDNS(config.NextcloudKey, config.NextcloudSecret, config.SocialCallbackBaseURL+"/auth/nextcloud/callback", config.NextcloudURL),
+		gitea.New(config.GiteaKey, config.GiteaSecret, config.SocialCallbackBaseURL+"/auth/gitea/callback"),
+		shopify.New(config.ShopifyKey, config.ShopifySecret, config.SocialCallbackBaseURL+"/auth/shopify/callback", shopify.ScopeReadCustomers, shopify.ScopeReadOrders),
+		apple.New(config.AppleKey, config.AppleSecret, config.SocialCallbackBaseURL+"/auth/apple/callback", nil, apple.ScopeName, apple.ScopeEmail),
+		strava.New(config.StravaKey, config.StravaSecret, config.SocialCallbackBaseURL+"/auth/strava/callback"),
 	)
 
 	// OpenID Connect is based on OpenID Connect Auto Discovery URL (https://openid.net/specs/openid-connect-discovery-1_0-17.html)
 	// because the OpenID Connect provider initialize it self in the New(), it can return an error which should be handled or ignored
 	// ignore the error for now
-	openidConnect, _ := openidConnect.New(config.OpenidConnectKey, config.OpenidConnectSecret, config.ServerBaseURL+"/auth/openid-connect/callback", config.OpenidConnectDiscoveryURL)
+	openidConnect, _ := openidConnect.New(config.OpenidConnectKey, config.OpenidConnectSecret, config.SocialCallbackBaseURL+"/auth/openid-connect/callback", config.OpenidConnectDiscoveryURL)
 	if openidConnect != nil {
 		goth.UseProviders(openidConnect)
 	}

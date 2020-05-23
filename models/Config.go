@@ -2,8 +2,8 @@ package models
 
 // Config : configurations settings
 type Config struct {
-	ServerBaseURL             string
-	CookiePsw                 string
+	SocialCallbackBaseURL     string
+	CookieStore               string
 	TwitterKey                string
 	TwitterSecret             string
 	FacebookKey               string
