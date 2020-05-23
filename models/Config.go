@@ -5,6 +5,7 @@ type Config struct {
 	SocialCallbackBaseURL     string
 	ServerPort                string
 	CookieStore               string
+	JwtTokenSecret            string
 	TwitterKey                string
 	TwitterSecret             string
 	FacebookKey               string

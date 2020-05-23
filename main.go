@@ -86,12 +86,12 @@ var store *sessions.CookieStore
 
 func main() {
 
-	os.Setenv("API_SECRET", "SDJKAFHHAJSGFAJSHFAFSAFHHSAJSKFASJJF") // TODO REMOVE IT
-
 	var config models.Config
 	if _, err = toml.DecodeFile("env.toml", &config); err != nil {
 		panic("Failed to read enviroment settings")
 	}
+
+	os.Setenv("JWTOKEN_SECRET", config.JwtTokenSecret) // TODO improve it
 
 	databaseConnectionSettings := "host=" + config.DB.Host + " port=" + config.DB.Port + " user=" + config.DB.User + " dbname=" + config.DB.DbName + " password=" + config.DB.Password + " sslmode=disable"
 	DB, err = gorm.Open("postgres", databaseConnectionSettings)
