@@ -10,3 +10,24 @@ services:
       - POSTGRES_DB=ms-users
     ports:
       - 5432:5432
+    networks:
+      - fullstack
+  
+  app:
+    image: golang:1.14.2-alpine
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: go run main.go
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+    depends_on:
+      - database
+    links:
+      - database
+    networks:
+      - fullstack
+  
+networks:
+  fullstack:
