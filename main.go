@@ -255,8 +255,8 @@ func main() {
 
 	r.Use(Middleware)
 
-	log.Println("listening on localhost:3000")
-	log.Fatal(http.ListenAndServe(":3000", r))
+	log.Println("listening on localhost" + config.ServerPort)
+	log.Fatal(http.ListenAndServe(config.ServerPort, r))
 }
 
 // Middleware : checking for login tokens

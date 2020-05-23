@@ -3,6 +3,7 @@ package models
 // Config : configurations settings
 type Config struct {
 	SocialCallbackBaseURL     string
+	ServerPort                string
 	CookieStore               string
 	TwitterKey                string
 	TwitterSecret             string
