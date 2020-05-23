@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -97,8 +96,8 @@ func main() {
 	databaseConnectionSettings := "host=127.0.0.1 port=5432 user=" + config.DB.User + " dbname=" + config.DB.DbName + " password=" + config.DB.Password + " sslmode=disable"
 	DB, err = gorm.Open("postgres", databaseConnectionSettings)
 	if err != nil {
-		fmt.Println("DEBUG: ", databaseConnectionSettings)
-		fmt.Println("ERR: ", err)
+		log.Println("DEBUG: ", databaseConnectionSettings)
+		log.Println("ERR: ", err)
 		panic("failed to connect database")
 	}
 	defer DB.Close()
@@ -290,12 +289,11 @@ func root(res http.ResponseWriter, req *http.Request) {
 
 // socialredirect : redirect to social login page of the provider chosen
 func socialredirect(res http.ResponseWriter, req *http.Request) {
-	if gothUser, err := gothic.CompleteUserAuth(res, req); err == nil {
-		t, _ := template.ParseFiles("fe/user_info.html")
-		t.Execute(res, gothUser)
-		fmt.Println("ERR: ", err)
+	if _, err := gothic.CompleteUserAuth(res, req); err == nil {
+		res.Header().Set("Location", "/user_profile")
+		res.WriteHeader(http.StatusTemporaryRedirect)
 	} else {
-		fmt.Println("ERR: ", err)
+		log.Println("ERR: ", err)
 		gothic.BeginAuthHandler(res, req)
 	}
 }
@@ -304,7 +302,7 @@ func socialredirect(res http.ResponseWriter, req *http.Request) {
 func callback(res http.ResponseWriter, req *http.Request) {
 	user, err := gothic.CompleteUserAuth(res, req)
 	if err != nil {
-		fmt.Fprintln(res, err)
+		log.Println(res, err)
 		return
 	}
 
@@ -318,13 +316,14 @@ func callback(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	t, _ := template.ParseFiles("fe/user_info.html")
-	t.Execute(res, user)
+	res.Header().Set("Location", "/user_profile")
+	res.WriteHeader(http.StatusTemporaryRedirect)
 }
 
 // logout : logut function
 func logout(res http.ResponseWriter, req *http.Request) {
 	gothic.Logout(res, req)
+	models.DeleteToken(res, req)
 	res.Header().Set("Location", "/")
 	res.WriteHeader(http.StatusTemporaryRedirect)
 }
@@ -345,9 +344,6 @@ func userProfile(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	fmt.Print(foundUser)
-
-	t, _ := template.ParseFiles("fe/user_info.html")
-	t.Execute(res, nil)
-	// TODO sdad
+	tmpl, _ := template.ParseFiles("fe/layout.html", "fe/user_info.html")
+	tmpl.ExecuteTemplate(res, "layout", foundUser)
 }

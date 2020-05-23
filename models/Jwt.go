@@ -13,6 +13,18 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
+// DeleteToken : creates a new empty token
+func DeleteToken(res http.ResponseWriter, req *http.Request) error {
+	http.SetCookie(res, &http.Cookie{
+		Name:    "auth_token",
+		Value:   "",
+		Expires: time.Now().Add(5 * time.Second),
+		Domain:  "",
+		Path:    "/",
+	})
+	return nil
+}
+
 // CreateToken : creates a new jwt token
 func CreateToken(res http.ResponseWriter, req *http.Request, userID uint) error {
 	claims := jwt.MapClaims{}
