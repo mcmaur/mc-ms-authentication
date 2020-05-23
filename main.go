@@ -93,7 +93,7 @@ func main() {
 		panic("Failed to read enviroment settings")
 	}
 
-	databaseConnectionSettings := "host=127.0.0.1 port=5432 user=" + config.DB.User + " dbname=" + config.DB.DbName + " password=" + config.DB.Password + " sslmode=disable"
+	databaseConnectionSettings := "host=" + config.DB.Host + " port=" + config.DB.Port + " user=" + config.DB.User + " dbname=" + config.DB.DbName + " password=" + config.DB.Password + " sslmode=disable"
 	DB, err = gorm.Open("postgres", databaseConnectionSettings)
 	if err != nil {
 		log.Println("DEBUG: ", databaseConnectionSettings)
