@@ -1,7 +1,7 @@
 # ms-authentication
 Authentication microservice written in Go #social-login #login #ms #microservice #golang
 
-$~$
+<br/>
 
 ### READY TO USE AUTHENTICATION MICROSERVICE
 
