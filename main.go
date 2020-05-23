@@ -283,8 +283,8 @@ func Middleware(next http.Handler) http.Handler {
 
 // root : showing login page
 func root(res http.ResponseWriter, req *http.Request) {
-	t, _ := template.ParseFiles("fe/login_page.html")
-	t.Execute(res, providerIndex)
+	tmpl, _ := template.ParseFiles("fe/layout.html", "fe/login.html")
+	tmpl.ExecuteTemplate(res, "layout", providerIndex)
 }
 
 // socialredirect : redirect to social login page of the provider chosen
