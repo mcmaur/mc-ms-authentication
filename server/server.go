@@ -14,7 +14,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	_ "github.com/jinzhu/gorm/dialects/postgres" // for database support
 
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"

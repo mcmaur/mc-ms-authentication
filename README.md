@@ -10,3 +10,15 @@ Authentication microservice written in Go #social-login #login #ms #microservice
 3. set social network keys inside env.toml file
 4. docker-compose up -d
 5. visit localhost:8080
+
+<br/>
+<br/>
+
+
+# Todo
+- dockerfile for building image
+- write more tests
+  - mock with httptest
+- add auth protocol: add applications and scope
+- refactor to improve readability and maintenance
+- map for social key & password in config file?
