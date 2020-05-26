@@ -285,7 +285,10 @@ func Middleware(next http.Handler) http.Handler {
 
 // root : showing login page
 func root(res http.ResponseWriter, req *http.Request) {
-	tmpl, _ := template.ParseFiles("fe/layout.html", "fe/login.html")
+	tmpl, err := template.ParseFiles("server/fe/layout.html", "server/fe/login.html")
+	if err != nil {
+		panic("Unable to run html template " + err.Error())
+	}
 	tmpl.ExecuteTemplate(res, "layout", providerIndex)
 }
 
@@ -346,6 +349,9 @@ func userProfile(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	tmpl, _ := template.ParseFiles("fe/layout.html", "fe/user_info.html")
+	tmpl, err := template.ParseFiles("server/fe/layout.html", "server/fe/user_info.html")
+	if err != nil {
+		panic("Unable to run html template " + err.Error())
+	}
 	tmpl.ExecuteTemplate(res, "layout", foundUser)
 }
