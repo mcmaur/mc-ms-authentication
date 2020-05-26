@@ -1,13 +1,13 @@
 package server
 
 import (
-	"html/template"
 	"log"
 	"net/http"
 	"os"
 	"sort"
 	"strings"
 
+	"github.com/mcmaur/mc-ms-authentication/server/controllers"
 	"github.com/mcmaur/mc-ms-authentication/server/models"
 
 	"github.com/BurntSushi/toml"
@@ -73,113 +73,109 @@ import (
 	"github.com/markbates/goth/providers/yandex"
 )
 
-// ProviderIndex : mind your own business
-type ProviderIndex struct {
-	Providers    []string
-	ProvidersMap map[string]string
-}
-
 // DB : db connection
-var DB *gorm.DB
-var providerIndex *ProviderIndex
+//var DB *gorm.DB
+//var providerIndex *ProviderIndex
 var err error
 var store *sessions.CookieStore
+
+var server = controllers.Server{}
 
 // Start : starts the server
 func Start() {
 
-	var config models.Config
-	if _, err = toml.DecodeFile("env.toml", &config); err != nil {
+	//var config models.Config
+	if _, err = toml.DecodeFile("env.toml", &server.Config); err != nil {
 		panic("Failed to read enviroment settings")
 	}
 
-	os.Setenv("JWTOKEN_SECRET", config.JwtTokenSecret) // TODO improve it
+	os.Setenv("JWTOKEN_SECRET", server.Config.JwtTokenSecret) // TODO improve it
 
-	databaseConnectionSettings := "host=" + config.DB.Host + " port=" + config.DB.Port + " user=" + config.DB.User + " dbname=" + config.DB.DbName + " password=" + config.DB.Password + " sslmode=disable"
-	DB, err = gorm.Open("postgres", databaseConnectionSettings)
+	databaseConnectionSettings := "host=" + server.Config.DB.Host + " port=" + server.Config.DB.Port + " user=" + server.Config.DB.User + " dbname=" + server.Config.DB.DbName + " password=" + server.Config.DB.Password + " sslmode=disable"
+	server.DB, err = gorm.Open("postgres", databaseConnectionSettings)
 	if err != nil {
 		log.Println("DEBUG: ", databaseConnectionSettings)
 		log.Println("ERR: ", err)
 		panic("failed to connect database")
 	}
-	defer DB.Close()
+	defer server.DB.Close()
 
 	// Migrate the schema
-	DB.AutoMigrate(&models.User{})
+	server.DB.AutoMigrate(&models.User{})
 
-	gothic.Store = sessions.NewCookieStore([]byte(config.CookieStore))
-	store = sessions.NewCookieStore([]byte(config.CookieStore))
+	gothic.Store = sessions.NewCookieStore([]byte(server.Config.CookieStore))
+	store = sessions.NewCookieStore([]byte(server.Config.CookieStore))
 
 	goth.UseProviders(
-		twitter.New(config.TwitterKey, config.TwitterSecret, config.SocialCallbackBaseURL+"/auth/twitter/callback"),
+		twitter.New(server.Config.TwitterKey, server.Config.TwitterSecret, server.Config.SocialCallbackBaseURL+"/auth/twitter/callback"),
 		// If you'd like to use authenticate instead of authorize in Twitter provider, use this instead.
-		// twitter.NewAuthenticate(config.TWITTER_KEY, config.TWITTER_SECRET, config.SocialCallbackBaseURL+"/auth/twitter/callback"),
+		// twitter.NewAuthenticate(server.Config.TWITTER_KEY, server.Config.TWITTER_SECRET, server.Config.SocialCallbackBaseURL+"/auth/twitter/callback"),
 
-		facebook.New(config.FacebookKey, config.FacebookSecret, config.SocialCallbackBaseURL+"/auth/facebook/callback"),
-		fitbit.New(config.FitbitKey, config.FitbitSecret, config.SocialCallbackBaseURL+"/auth/fitbit/callback"),
-		google.New(config.GoogleKey, config.GoogleSecret, config.SocialCallbackBaseURL+"/auth/google/callback"),
-		gplus.New(config.GplusKey, config.GplusSecret, config.SocialCallbackBaseURL+"/auth/gplus/callback"),
-		github.New(config.GithubKey, config.GithubSecret, config.SocialCallbackBaseURL+"/auth/github/callback"),
-		spotify.New(config.SpotifyKey, config.SpotifySecret, config.SocialCallbackBaseURL+"/auth/spotify/callback"),
-		linkedin.New(config.LinkedinKey, config.LinkedinSecret, config.SocialCallbackBaseURL+"/auth/linkedin/callback"),
-		line.New(config.LineKey, config.LineSecret, config.SocialCallbackBaseURL+"/auth/line/callback", "profile", "openid", "email"),
-		lastfm.New(config.LastfmKey, config.LastfmSecret, config.SocialCallbackBaseURL+"/auth/lastfm/callback"),
-		twitch.New(config.TwitchKey, config.TwitchSecret, config.SocialCallbackBaseURL+"/auth/twitch/callback"),
-		dropbox.New(config.DropboxKey, config.DropboxSecret, config.SocialCallbackBaseURL+"/auth/dropbox/callback"),
-		digitalocean.New(config.DigitaloceanKey, config.DigitaloceanSecret, config.SocialCallbackBaseURL+"/auth/digitalocean/callback", "read"),
-		bitbucket.New(config.BitbucketKey, config.BitbucketSecret, config.SocialCallbackBaseURL+"/auth/bitbucket/callback"),
-		instagram.New(config.InstagramKey, config.InstagramSecret, config.SocialCallbackBaseURL+"/auth/instagram/callback"),
-		intercom.New(config.IntercomKey, config.IntercomSecret, config.SocialCallbackBaseURL+"/auth/intercom/callback"),
-		box.New(config.BoxKey, config.BoxSecret, config.SocialCallbackBaseURL+"/auth/box/callback"),
-		salesforce.New(config.SalesforceKey, config.SalesforceSecret, config.SocialCallbackBaseURL+"/auth/salesforce/callback"),
-		seatalk.New(config.SeatalkKey, config.SeatalkSecret, config.SocialCallbackBaseURL+"/auth/seatalk/callback"),
-		amazon.New(config.AmazonKey, config.AmazonSecret, config.SocialCallbackBaseURL+"/auth/amazon/callback"),
-		yammer.New(config.YammerKey, config.YammerSecret, config.SocialCallbackBaseURL+"/auth/yammer/callback"),
-		onedrive.New(config.OnedriveKey, config.OnedriveSecret, config.SocialCallbackBaseURL+"/auth/onedrive/callback"),
-		azuread.New(config.AzureadKey, config.AzureadSecret, config.SocialCallbackBaseURL+"/auth/azuread/callback", nil),
-		microsoftonline.New(config.MicrosoftonlineKey, config.MicrosoftonlineSecret, config.SocialCallbackBaseURL+"/auth/microsoftonline/callback"),
-		battlenet.New(config.BattlenetKey, config.BattlenetSecret, config.SocialCallbackBaseURL+"/auth/battlenet/callback"),
-		eveonline.New(config.EveonlineKey, config.EveonlineSecret, config.SocialCallbackBaseURL+"/auth/eveonline/callback"),
-		kakao.New(config.KakaoKey, config.KakaoSecret, config.SocialCallbackBaseURL+"/auth/kakao/callback"),
+		facebook.New(server.Config.FacebookKey, server.Config.FacebookSecret, server.Config.SocialCallbackBaseURL+"/auth/facebook/callback"),
+		fitbit.New(server.Config.FitbitKey, server.Config.FitbitSecret, server.Config.SocialCallbackBaseURL+"/auth/fitbit/callback"),
+		google.New(server.Config.GoogleKey, server.Config.GoogleSecret, server.Config.SocialCallbackBaseURL+"/auth/google/callback"),
+		gplus.New(server.Config.GplusKey, server.Config.GplusSecret, server.Config.SocialCallbackBaseURL+"/auth/gplus/callback"),
+		github.New(server.Config.GithubKey, server.Config.GithubSecret, server.Config.SocialCallbackBaseURL+"/auth/github/callback"),
+		spotify.New(server.Config.SpotifyKey, server.Config.SpotifySecret, server.Config.SocialCallbackBaseURL+"/auth/spotify/callback"),
+		linkedin.New(server.Config.LinkedinKey, server.Config.LinkedinSecret, server.Config.SocialCallbackBaseURL+"/auth/linkedin/callback"),
+		line.New(server.Config.LineKey, server.Config.LineSecret, server.Config.SocialCallbackBaseURL+"/auth/line/callback", "profile", "openid", "email"),
+		lastfm.New(server.Config.LastfmKey, server.Config.LastfmSecret, server.Config.SocialCallbackBaseURL+"/auth/lastfm/callback"),
+		twitch.New(server.Config.TwitchKey, server.Config.TwitchSecret, server.Config.SocialCallbackBaseURL+"/auth/twitch/callback"),
+		dropbox.New(server.Config.DropboxKey, server.Config.DropboxSecret, server.Config.SocialCallbackBaseURL+"/auth/dropbox/callback"),
+		digitalocean.New(server.Config.DigitaloceanKey, server.Config.DigitaloceanSecret, server.Config.SocialCallbackBaseURL+"/auth/digitalocean/callback", "read"),
+		bitbucket.New(server.Config.BitbucketKey, server.Config.BitbucketSecret, server.Config.SocialCallbackBaseURL+"/auth/bitbucket/callback"),
+		instagram.New(server.Config.InstagramKey, server.Config.InstagramSecret, server.Config.SocialCallbackBaseURL+"/auth/instagram/callback"),
+		intercom.New(server.Config.IntercomKey, server.Config.IntercomSecret, server.Config.SocialCallbackBaseURL+"/auth/intercom/callback"),
+		box.New(server.Config.BoxKey, server.Config.BoxSecret, server.Config.SocialCallbackBaseURL+"/auth/box/callback"),
+		salesforce.New(server.Config.SalesforceKey, server.Config.SalesforceSecret, server.Config.SocialCallbackBaseURL+"/auth/salesforce/callback"),
+		seatalk.New(server.Config.SeatalkKey, server.Config.SeatalkSecret, server.Config.SocialCallbackBaseURL+"/auth/seatalk/callback"),
+		amazon.New(server.Config.AmazonKey, server.Config.AmazonSecret, server.Config.SocialCallbackBaseURL+"/auth/amazon/callback"),
+		yammer.New(server.Config.YammerKey, server.Config.YammerSecret, server.Config.SocialCallbackBaseURL+"/auth/yammer/callback"),
+		onedrive.New(server.Config.OnedriveKey, server.Config.OnedriveSecret, server.Config.SocialCallbackBaseURL+"/auth/onedrive/callback"),
+		azuread.New(server.Config.AzureadKey, server.Config.AzureadSecret, server.Config.SocialCallbackBaseURL+"/auth/azuread/callback", nil),
+		microsoftonline.New(server.Config.MicrosoftonlineKey, server.Config.MicrosoftonlineSecret, server.Config.SocialCallbackBaseURL+"/auth/microsoftonline/callback"),
+		battlenet.New(server.Config.BattlenetKey, server.Config.BattlenetSecret, server.Config.SocialCallbackBaseURL+"/auth/battlenet/callback"),
+		eveonline.New(server.Config.EveonlineKey, server.Config.EveonlineSecret, server.Config.SocialCallbackBaseURL+"/auth/eveonline/callback"),
+		kakao.New(server.Config.KakaoKey, server.Config.KakaoSecret, server.Config.SocialCallbackBaseURL+"/auth/kakao/callback"),
 
 		//Pointed localhost.com to http://localhost:3000/auth/yahoo/callback through proxy as yahoo
 		// does not allow to put custom ports in redirection uri
-		yahoo.New(config.YahooKey, config.YahooSecret, "http://localhost.com"),
-		typetalk.New(config.TypetalkKey, config.TypetalkSecret, config.SocialCallbackBaseURL+"/auth/typetalk/callback", "my"),
-		slack.New(config.SlackKey, config.SlackSecret, config.SocialCallbackBaseURL+"/auth/slack/callback"),
-		stripe.New(config.StripeKey, config.StripeSecret, config.SocialCallbackBaseURL+"/auth/stripe/callback"),
-		wepay.New(config.WepayKey, config.WepaySecret, config.SocialCallbackBaseURL+"/auth/wepay/callback", "view_user"),
+		yahoo.New(server.Config.YahooKey, server.Config.YahooSecret, "http://localhost.com"),
+		typetalk.New(server.Config.TypetalkKey, server.Config.TypetalkSecret, server.Config.SocialCallbackBaseURL+"/auth/typetalk/callback", "my"),
+		slack.New(server.Config.SlackKey, server.Config.SlackSecret, server.Config.SocialCallbackBaseURL+"/auth/slack/callback"),
+		stripe.New(server.Config.StripeKey, server.Config.StripeSecret, server.Config.SocialCallbackBaseURL+"/auth/stripe/callback"),
+		wepay.New(server.Config.WepayKey, server.Config.WepaySecret, server.Config.SocialCallbackBaseURL+"/auth/wepay/callback", "view_user"),
 
 		//By default paypal production auth urls will be used, please set PAYPAL_ENV=sandbox as environment variable for testing
 		//in sandbox environment
-		paypal.New(config.PaypalKey, config.PaypalSecret, config.SocialCallbackBaseURL+"/auth/paypal/callback"),
-		steam.New(config.SteamKey, config.SocialCallbackBaseURL+"/auth/steam/callback"),
-		heroku.New(config.HerokuKey, config.HerokuSecret, config.SocialCallbackBaseURL+"/auth/heroku/callback"),
-		uber.New(config.UberKey, config.UberSecret, config.SocialCallbackBaseURL+"/auth/uber/callback"),
-		soundcloud.New(config.SoundcloudKey, config.SoundcloudSecret, config.SocialCallbackBaseURL+"/auth/soundcloud/callback"),
-		gitlab.New(config.GitlabKey, config.GitlabSecret, config.SocialCallbackBaseURL+"/auth/gitlab/callback"),
-		dailymotion.New(config.DailymotionKey, config.DailymotionSecret, config.SocialCallbackBaseURL+"/auth/dailymotion/callback", "email"),
-		deezer.New(config.DeezerKey, config.DeezerSecret, config.SocialCallbackBaseURL+"/auth/deezer/callback", "email"),
-		discord.New(config.DiscordKey, config.DiscordSecret, config.SocialCallbackBaseURL+"/auth/discord/callback", discord.ScopeIdentify, discord.ScopeEmail),
-		meetup.New(config.MeetupKey, config.MeetupSecret, config.SocialCallbackBaseURL+"/auth/meetup/callback"),
+		paypal.New(server.Config.PaypalKey, server.Config.PaypalSecret, server.Config.SocialCallbackBaseURL+"/auth/paypal/callback"),
+		steam.New(server.Config.SteamKey, server.Config.SocialCallbackBaseURL+"/auth/steam/callback"),
+		heroku.New(server.Config.HerokuKey, server.Config.HerokuSecret, server.Config.SocialCallbackBaseURL+"/auth/heroku/callback"),
+		uber.New(server.Config.UberKey, server.Config.UberSecret, server.Config.SocialCallbackBaseURL+"/auth/uber/callback"),
+		soundcloud.New(server.Config.SoundcloudKey, server.Config.SoundcloudSecret, server.Config.SocialCallbackBaseURL+"/auth/soundcloud/callback"),
+		gitlab.New(server.Config.GitlabKey, server.Config.GitlabSecret, server.Config.SocialCallbackBaseURL+"/auth/gitlab/callback"),
+		dailymotion.New(server.Config.DailymotionKey, server.Config.DailymotionSecret, server.Config.SocialCallbackBaseURL+"/auth/dailymotion/callback", "email"),
+		deezer.New(server.Config.DeezerKey, server.Config.DeezerSecret, server.Config.SocialCallbackBaseURL+"/auth/deezer/callback", "email"),
+		discord.New(server.Config.DiscordKey, server.Config.DiscordSecret, server.Config.SocialCallbackBaseURL+"/auth/discord/callback", discord.ScopeIdentify, discord.ScopeEmail),
+		meetup.New(server.Config.MeetupKey, server.Config.MeetupSecret, server.Config.SocialCallbackBaseURL+"/auth/meetup/callback"),
 
 		//Auth0 allocates domain per customer, a domain must be provided for auth0 to work
-		auth0.New(config.Auth0Key, config.Auth0Secret, config.SocialCallbackBaseURL+"/auth/auth0/callback", config.Auth0Domain),
-		xero.New(config.XeroKey, config.XeroSecret, config.SocialCallbackBaseURL+"/auth/xero/callback"),
-		vk.New(config.VkKey, config.VkSecret, config.SocialCallbackBaseURL+"/auth/vk/callback"),
-		naver.New(config.NaverKey, config.NaverSecret, config.SocialCallbackBaseURL+"/auth/naver/callback"),
-		yandex.New(config.YandexKey, config.YandexSecret, config.SocialCallbackBaseURL+"/auth/yandex/callback"),
-		nextcloud.NewCustomisedDNS(config.NextcloudKey, config.NextcloudSecret, config.SocialCallbackBaseURL+"/auth/nextcloud/callback", config.NextcloudURL),
-		gitea.New(config.GiteaKey, config.GiteaSecret, config.SocialCallbackBaseURL+"/auth/gitea/callback"),
-		shopify.New(config.ShopifyKey, config.ShopifySecret, config.SocialCallbackBaseURL+"/auth/shopify/callback", shopify.ScopeReadCustomers, shopify.ScopeReadOrders),
-		apple.New(config.AppleKey, config.AppleSecret, config.SocialCallbackBaseURL+"/auth/apple/callback", nil, apple.ScopeName, apple.ScopeEmail),
-		strava.New(config.StravaKey, config.StravaSecret, config.SocialCallbackBaseURL+"/auth/strava/callback"),
+		auth0.New(server.Config.Auth0Key, server.Config.Auth0Secret, server.Config.SocialCallbackBaseURL+"/auth/auth0/callback", server.Config.Auth0Domain),
+		xero.New(server.Config.XeroKey, server.Config.XeroSecret, server.Config.SocialCallbackBaseURL+"/auth/xero/callback"),
+		vk.New(server.Config.VkKey, server.Config.VkSecret, server.Config.SocialCallbackBaseURL+"/auth/vk/callback"),
+		naver.New(server.Config.NaverKey, server.Config.NaverSecret, server.Config.SocialCallbackBaseURL+"/auth/naver/callback"),
+		yandex.New(server.Config.YandexKey, server.Config.YandexSecret, server.Config.SocialCallbackBaseURL+"/auth/yandex/callback"),
+		nextcloud.NewCustomisedDNS(server.Config.NextcloudKey, server.Config.NextcloudSecret, server.Config.SocialCallbackBaseURL+"/auth/nextcloud/callback", server.Config.NextcloudURL),
+		gitea.New(server.Config.GiteaKey, server.Config.GiteaSecret, server.Config.SocialCallbackBaseURL+"/auth/gitea/callback"),
+		shopify.New(server.Config.ShopifyKey, server.Config.ShopifySecret, server.Config.SocialCallbackBaseURL+"/auth/shopify/callback", shopify.ScopeReadCustomers, shopify.ScopeReadOrders),
+		apple.New(server.Config.AppleKey, server.Config.AppleSecret, server.Config.SocialCallbackBaseURL+"/auth/apple/callback", nil, apple.ScopeName, apple.ScopeEmail),
+		strava.New(server.Config.StravaKey, server.Config.StravaSecret, server.Config.SocialCallbackBaseURL+"/auth/strava/callback"),
 	)
 
 	// OpenID Connect is based on OpenID Connect Auto Discovery URL (https://openid.net/specs/openid-connect-discovery-1_0-17.html)
 	// because the OpenID Connect provider initialize it self in the New(), it can return an error which should be handled or ignored
 	// ignore the error for now
-	openidConnect, _ := openidConnect.New(config.OpenidConnectKey, config.OpenidConnectSecret, config.SocialCallbackBaseURL+"/auth/openid-connect/callback", config.OpenidConnectDiscoveryURL)
+	openidConnect, _ := openidConnect.New(server.Config.OpenidConnectKey, server.Config.OpenidConnectSecret, server.Config.SocialCallbackBaseURL+"/auth/openid-connect/callback", server.Config.OpenidConnectDiscoveryURL)
 	if openidConnect != nil {
 		goth.UseProviders(openidConnect)
 	}
@@ -245,20 +241,20 @@ func Start() {
 	}
 	sort.Strings(keys)
 
-	providerIndex = &ProviderIndex{Providers: keys, ProvidersMap: m}
+	server.ProviderIndex = &controllers.ProviderIndex{Providers: keys, ProvidersMap: m}
 
 	r := mux.NewRouter()
-	r.HandleFunc("/", root)
-	r.HandleFunc("/auth/{provider}", socialredirect)
-	r.HandleFunc("/auth/{provider}/callback", callback)
-	r.HandleFunc("/logout/{provider}", logout)
+	r.HandleFunc("/", server.RootHandler)
+	r.HandleFunc("/auth/{provider}", server.SocialredirectHandler)
+	r.HandleFunc("/auth/{provider}/callback", server.SocialCallbackHandler)
+	r.HandleFunc("/logout/{provider}", server.LogoutHandler)
 
-	r.HandleFunc("/user_profile", userProfile)
+	r.HandleFunc("/user_profile", server.UserProfileHandler)
 
 	r.Use(Middleware)
 
-	log.Println("listening on localhost" + config.ServerPort)
-	log.Fatal(http.ListenAndServe(config.ServerPort, r))
+	log.Println("listening on localhost" + server.Config.ServerPort)
+	log.Fatal(http.ListenAndServe(server.Config.ServerPort, r))
 }
 
 // Middleware : checking for login tokens
@@ -281,77 +277,4 @@ func Middleware(next http.Handler) http.Handler {
 			}
 		}
 	})
-}
-
-// root : showing login page
-func root(res http.ResponseWriter, req *http.Request) {
-	tmpl, err := template.ParseFiles("server/fe/layout.html", "server/fe/login.html")
-	if err != nil {
-		panic("Unable to run html template " + err.Error())
-	}
-	tmpl.ExecuteTemplate(res, "layout", providerIndex)
-}
-
-// socialredirect : redirect to social login page of the provider chosen
-func socialredirect(res http.ResponseWriter, req *http.Request) {
-	if _, err := gothic.CompleteUserAuth(res, req); err == nil {
-		res.Header().Set("Location", "/user_profile")
-		res.WriteHeader(http.StatusTemporaryRedirect)
-	} else {
-		log.Println("ERR: ", err)
-		gothic.BeginAuthHandler(res, req)
-	}
-}
-
-// callback : function executed after return from social network
-func callback(res http.ResponseWriter, req *http.Request) {
-	user, err := gothic.CompleteUserAuth(res, req)
-	if err != nil {
-		log.Println(res, err)
-		return
-	}
-
-	var currentUser models.User
-	currentUser.FromGothUser(user)
-	DB.FirstOrCreate(&currentUser)
-
-	err = models.CreateToken(res, req, currentUser.ID)
-	if err != nil {
-		http.Error(res, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	res.Header().Set("Location", "/user_profile")
-	res.WriteHeader(http.StatusTemporaryRedirect)
-}
-
-// logout : logut function
-func logout(res http.ResponseWriter, req *http.Request) {
-	gothic.Logout(res, req)
-	models.DeleteToken(res, req)
-	res.Header().Set("Location", "/")
-	res.WriteHeader(http.StatusTemporaryRedirect)
-}
-
-// userProfile : showing page with user infos
-func userProfile(res http.ResponseWriter, req *http.Request) {
-
-	userid, err := models.ExtractTokenID(req)
-	if err != nil {
-		http.Error(res, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	user := models.User{}
-	foundUser, err := user.FindUserByID(DB, userid)
-	if err != nil {
-		http.Error(res, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	tmpl, err := template.ParseFiles("server/fe/layout.html", "server/fe/user_info.html")
-	if err != nil {
-		panic("Unable to run html template " + err.Error())
-	}
-	tmpl.ExecuteTemplate(res, "layout", foundUser)
 }
