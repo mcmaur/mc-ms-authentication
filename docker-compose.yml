@@ -17,6 +17,7 @@ services:
     image: golang:1.14.2-alpine
     volumes:
       - .:/app
+      - $GOPATH/pkg/mod/cache:/go/pkg/mod/cache
     working_dir: /app
     command: go run main.go
     restart: unless-stopped
