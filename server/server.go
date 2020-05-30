@@ -243,18 +243,18 @@ func Start() {
 
 	server.ProviderIndex = &controllers.ProviderIndex{Providers: keys, ProvidersMap: m}
 
-	r := mux.NewRouter()
-	r.HandleFunc("/", server.RootHandler)
-	r.HandleFunc("/auth/{provider}", server.SocialredirectHandler)
-	r.HandleFunc("/auth/{provider}/callback", server.SocialCallbackHandler)
-	r.HandleFunc("/logout/{provider}", server.LogoutHandler)
+	server.Router = mux.NewRouter()
+	server.Router.HandleFunc("/", server.RootHandler)
+	server.Router.HandleFunc("/auth/{provider}", server.SocialredirectHandler)
+	server.Router.HandleFunc("/auth/{provider}/callback", server.SocialCallbackHandler)
+	server.Router.HandleFunc("/logout/{provider}", server.LogoutHandler)
 
-	r.HandleFunc("/user_profile", server.UserProfileHandler)
+	server.Router.HandleFunc("/user_profile", server.UserProfileHandler)
 
-	r.Use(Middleware)
+	server.Router.Use(Middleware)
 
 	log.Println("listening on localhost" + server.Config.ServerPort)
-	log.Fatal(http.ListenAndServe(server.Config.ServerPort, r))
+	log.Fatal(http.ListenAndServe(server.Config.ServerPort, server.Router))
 }
 
 // Middleware : checking for login tokens
