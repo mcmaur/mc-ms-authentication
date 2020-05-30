@@ -73,9 +73,6 @@ import (
 	"github.com/markbates/goth/providers/yandex"
 )
 
-// DB : db connection
-//var DB *gorm.DB
-//var providerIndex *ProviderIndex
 var err error
 var store *sessions.CookieStore
 
@@ -84,7 +81,6 @@ var server = controllers.Server{}
 // Start : starts the server
 func Start() {
 
-	//var config models.Config
 	if _, err = toml.DecodeFile("env.toml", &server.Config); err != nil {
 		panic("Failed to read enviroment settings")
 	}
