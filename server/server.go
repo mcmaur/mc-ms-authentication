@@ -247,6 +247,13 @@ func Start() {
 
 	server.Router.HandleFunc("/user_profile", server.UserProfileHandler)
 
+	// user api
+	server.Router.HandleFunc("/user/{userid}/", server.GetUserByIDHandler)
+	//	server.Router.HandleFunc("/user?{name:[0-9]+}", server.GetUserByEmailHandler)
+	server.Router.Path("/user?{useremail:[0-9]+}").HandlerFunc(server.GetUserByEmailHandler)
+	server.Router.HandleFunc("/user/{userid}/", server.DeleteUserByIDHandler).Methods("DELETE")
+	//
+
 	server.Router.Use(Middleware)
 
 	log.Println("listening on localhost" + server.Config.ServerPort)
