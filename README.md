@@ -1,5 +1,7 @@
 # ms-authentication
-Authentication microservice written in Go #social-login #login #ms #microservice #golang
+Authentication microservice written in Go 
+
+#social-login #login #ms #microservice #golang
 
 <br/>
 
@@ -16,9 +18,11 @@ Authentication microservice written in Go #social-login #login #ms #microservice
 
 
 # Todo
-- dockerfile for building image
-- write more tests
-  - mock with httptest
-- add auth protocol: add applications and scope
-- refactor to improve readability and maintenance
+- [X] dockerfile
+- [ ] write more tests
+  - [ ] mock with httptest
+- [ ] refactor to improve readability and maintenance
+- [ ] rpc functions for others microservices
+-
+- add auth protocol: add applications and scope?
 - map for social key & password in config file?
